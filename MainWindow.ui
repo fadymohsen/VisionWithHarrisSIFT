@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>962</width>
-    <height>671</height>
+    <height>685</height>
    </rect>
   </property>
   <property name="font">
@@ -2131,7 +2131,7 @@ QTabBar::tab:selected {
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="matching_imagee_btn">
+             <widget class="QPushButton" name="matching_image_btn">
               <property name="text">
                <string>Match</string>
               </property>
