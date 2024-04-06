@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTabWidget
 from PyQt5.uic import loadUi
 from PyQt5.QtCore import Qt
-
-
+import numpy as np
+import pyqtgraph as pg
 
 
 
@@ -15,7 +15,18 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.tab_widget)
         loadUi('MainWindow.ui', self.tab_widget)
         self.full_screen = False
+    
 
+    def display_image(self,graphics_widget,image_data):
+        """Utility function to display an image in a given graphics layout widget."""
+        if image_data is not None:
+            graphics_widget.clear()
+            image_data = np.rot90(image_data, -1)
+            view_box = graphics_widget.addViewBox()
+            image_item = pg.ImageItem(image_data)
+            view_box.addItem(image_item)
+        else:
+            print("Image data is not available.")
 
 
 
