@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-
+import time 
 
 class Template_Matching:
     def __init__(self,main_window,file_path) :
@@ -68,7 +68,12 @@ class Template_Matching:
         return target_indics  
     
     def matching_part(self):
+        start_time = time.time()       
         pt = self.template_matching()
+        end_time = time.time()         
+        computation_time = end_time - start_time      # Calculate the computation time
+        print("Computation time:", computation_time, "seconds")  
+        
         self.img = cv2.rectangle(self.img, 
                               (pt[1],pt[0]), (pt[1]+self.template_img.shape[1],pt[0]+self.template_img.shape[0]), 
                               (0,255,0), 2) 
