@@ -26,16 +26,16 @@ class Template_Matching:
 
     def Normalised_Cross_Correlation(self,roi, target):
     # Normalised Cross Correlation Equation
-        cor=np.sum(roi*target)
-        nor = np.sqrt((np.sum(roi**2)))*np.sqrt(np.sum(target**2))
-        return cor / nor        
+        corr=np.sum(roi*target)
+        norm = np.sqrt((np.sum(roi**2)))*np.sqrt(np.sum(target**2))
+        return corr / norm      
     
 
     def Normalised_Sum_Square_difference(self,roi, target):
     # Normalised Cross Correlation Equation
-        cor=np.sum((roi-target)**2)
-        nor = np.sqrt((np.sum(roi**2)))*np.sqrt(np.sum(target**2))
-        return cor / nor  
+        SSD=np.sum((roi-target)**2)
+        norm = np.sqrt((np.sum(roi**2)))*np.sqrt(np.sum(target**2))
+        return SSD / norm  
 
     def template_matching(self):
         target_indics = (0,0)
