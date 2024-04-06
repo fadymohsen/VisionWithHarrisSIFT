@@ -3,7 +3,7 @@ from PyQt5.uic import loadUi
 from PyQt5.QtCore import Qt
 import numpy as np
 import pyqtgraph as pg
-
+from Matching_image import Template_Matching
 
 
 
@@ -15,7 +15,11 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.tab_widget)
         loadUi('MainWindow.ui', self.tab_widget)
         self.full_screen = False
-    
+        self.template_matching = Template_Matching(self)
+        self.template_matching.handle_buttons()   
+
+
+
 
     def display_image(self,graphics_widget,image_data):
         """Utility function to display an image in a given graphics layout widget."""

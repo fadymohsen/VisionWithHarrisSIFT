@@ -2131,7 +2131,7 @@ QTabBar::tab:selected {
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="matching_image_btn">
+             <widget class="QPushButton" name="matching_imagee_btn">
               <property name="text">
                <string>Match</string>
               </property>

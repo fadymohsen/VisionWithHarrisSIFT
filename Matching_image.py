@@ -1,18 +1,36 @@
 import numpy as np
 import cv2
 import time 
-
+from PyQt5.QtWidgets import QApplication, QTabWidget, QFileDialog
 class Template_Matching:
-    def __init__(self,main_window,file_path) :
+    def __init__(self,main_window) :
         self.ui = main_window
-        self.file_path = file_path
         self.img = None
         self.template_img = None
 
 
     def handle_buttons(self):
-        self.ui.matching_image_btn.clicked.connect(self.matching_part) 
-        self.ui.matching_method_selection.currentTextChanged.connect(self.matching_part)   
+        self.ui.matching_imagee_btn.clicked.connect(self.matching_image) 
+        self.ui.matching_method_selection.currentTextChanged.connect(self.matching_image)   
+        self.ui.upload_image1.clicked.connect(lambda:self.browse_image(1))
+        
+        self.ui.upload_image2.clicked.connect(lambda:self.browse_image(0))
+    
+
+
+    def browse_image(self,idx):
+        options = QFileDialog.Options()
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", "",
+                                                "Image Files (*.png *.jpg *.jpeg *.bmp *.gif *.webp)",
+                                                options=options)
+        
+        if idx :
+            self.img = cv2.imread(file_path,0)
+            self.ui.display_image(self.ui.originial_image_graph,self.img)
+        else:
+            self.template_img = cv2.imread(file_path,0)  
+            self.ui.display_image(self.ui.template_image_graph,self.template_img)  
+                                                
 
 
     def read_image(self,idx):
@@ -67,7 +85,7 @@ class Template_Matching:
                 
         return target_indics  
     
-    def matching_part(self):
+    def matching_image(self):
         start_time = time.time()       
         pt = self.template_matching()
         end_time = time.time()         
