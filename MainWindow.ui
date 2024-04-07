@@ -603,7 +603,7 @@ QTabBar::tab:selected {
 </string>
   </property>
   <property name="currentIndex">
-   <number>0</number>
+   <number>2</number>
   </property>
   <widget class="QWidget" name="ImportMasterImage">
    <attribute name="title">
@@ -916,7 +916,7 @@ QTabBar::tab:selected {
              </widget>
             </item>
             <item>
-             <widget class="GraphicsLayoutWidget" name="image_beforeEdgeDetection_3" native="true">
+             <widget class="GraphicsLayoutWidget" name="graphicsLayoutWidget_beforeHarris" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -1022,7 +1022,7 @@ QTabBar::tab:selected {
              </widget>
             </item>
             <item>
-             <widget class="GraphicsLayoutWidget" name="image_beforeEdgeDetection_2" native="true">
+             <widget class="GraphicsLayoutWidget" name="graphicsLayoutWidget_afterHarris" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -1484,7 +1484,7 @@ QTabBar::tab:selected {
              </widget>
             </item>
             <item>
-             <widget class="GraphicsLayoutWidget" name="image_beforeEdgeDetection_4" native="true">
+             <widget class="GraphicsLayoutWidget" name="graphicsLayoutWidget_beforeSIFT" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -1590,7 +1590,7 @@ QTabBar::tab:selected {
              </widget>
             </item>
             <item>
-             <widget class="GraphicsLayoutWidget" name="image_beforeEdgeDetection_5" native="true">
+             <widget class="GraphicsLayoutWidget" name="graphicsLayoutWidget_afterSIFT" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>

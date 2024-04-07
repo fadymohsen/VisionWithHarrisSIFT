@@ -30,6 +30,7 @@ class MainWindow(QTabWidget):
         if file_name:
             self.selected_image_path = file_name
             self.display_image_on_graphics_layout(file_name)
+            self.addSIFT.SIFTDetector()
 
     def display_image_on_graphics_layout(self, image_path):
         image_data = cv2.imread(image_path)
