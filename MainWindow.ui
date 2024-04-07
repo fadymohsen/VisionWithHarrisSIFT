@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>962</width>
+    <width>983</width>
     <height>685</height>
    </rect>
   </property>
@@ -603,7 +603,7 @@ QTabBar::tab:selected {
 </string>
   </property>
   <property name="currentIndex">
-   <number>2</number>
+   <number>3</number>
   </property>
   <widget class="QWidget" name="ImportMasterImage">
    <attribute name="title">
@@ -2131,13 +2131,6 @@ QTabBar::tab:selected {
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="matching_image_btn">
-              <property name="text">
-               <string>Match</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <spacer name="horizontalSpacer_29">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -2420,6 +2413,11 @@ QTabBar::tab:selected {
                 </property>
                 <item>
                  <property name="text">
+                  <string>Choose a method</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
                   <string>Cross Correlation</string>
                  </property>
                 </item>
@@ -2502,7 +2500,7 @@ QTabBar::tab:selected {
                </widget>
               </item>
               <item>
-               <widget class="QTextEdit" name="textEdit_3">
+               <widget class="QTextEdit" name="computation_time_text">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -2520,6 +2518,9 @@ QTabBar::tab:selected {
                   <width>300</width>
                   <height>25</height>
                  </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">font: 12pt &quot;Segoe UI&quot;;</string>
                 </property>
                 <property name="readOnly">
                  <bool>true</bool>

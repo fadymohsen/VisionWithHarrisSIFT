@@ -17,6 +17,7 @@ class MainWindow(QTabWidget):
         loadUi(ui_file, self)
         self.full_screen = False
         self.pushButton_browseImage.clicked.connect(self.browse_image)
+        
         self.template_matching = Template_Matching(self)
         self.addSIFT = SIFTCornerDetection(self)
         self.template_matching.handle_buttons()   

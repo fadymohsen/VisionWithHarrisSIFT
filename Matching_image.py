@@ -3,14 +3,14 @@ import cv2
 import time 
 from PyQt5.QtWidgets import QApplication, QTabWidget, QFileDialog
 class Template_Matching:
-    def __init__(self,main_window) :
-        self.ui = main_window
+    def __init__(self,tab_widget) :
+        self.ui = tab_widget
+        
         self.img = None
         self.template_img = None
 
 
     def handle_buttons(self):
-        self.ui.matching_image_btn.clicked.connect(self.matching_image) 
         self.ui.matching_method_selection.currentTextChanged.connect(self.matching_image)   
         self.ui.upload_image1.clicked.connect(lambda:self.browse_image(1))
         
@@ -20,7 +20,7 @@ class Template_Matching:
 
     def browse_image(self,idx):
         options = QFileDialog.Options()
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", "",
+        file_path, _ = QFileDialog.getOpenFileName(self.ui, "Select Image", "",
                                                 "Image Files (*.png *.jpg *.jpeg *.bmp *.gif *.webp)",
                                                 options=options)
         
@@ -33,15 +33,7 @@ class Template_Matching:
                                                 
 
 
-    def read_image(self,idx):
-        if idx :
-            self.img = cv2.imread(self.file_path,0)
-            self.ui.display_image(self.ui.originial_image_graph,self.img)
-        else:
-            self.template_img = cv2.imread(self.file_path,0)  
-            self.ui.display_image(self.ui.template_image_graph,self.template_img)  
-
-
+  
     def Normalised_Cross_Correlation(self,roi, target):
     # Normalised Cross Correlation Equation
         corr=np.sum(roi*target)
@@ -78,6 +70,7 @@ class Template_Matching:
                         target_indics = (i,j)
                 else:
                     template_img[i,j]= self.Normalised_Sum_Square_difference(roi,self.template_img)
+                    print(f"method:SSSD")
                     
                     if template_img[i,j] < threshold_value:
                         threshold_value = template_img[i,j]
@@ -91,10 +84,12 @@ class Template_Matching:
         end_time = time.time()         
         computation_time = end_time - start_time      # Calculate the computation time
         print("Computation time:", computation_time, "seconds")  
-        
-        self.img = cv2.rectangle(self.img, 
+        self.ui.computation_time_text.clear()
+        self.ui.computation_time_text.append(str(np.round(computation_time,2))+str("  Sec"))
+        img = np.copy(self.img)
+        img = cv2.rectangle(img, 
                               (pt[1],pt[0]), (pt[1]+self.template_img.shape[1],pt[0]+self.template_img.shape[0]), 
                               (0,255,0), 2) 
-        self.ui.display_image(self.ui.matching_result_graph,self.img)
+        self.ui.display_image(self.ui.matching_result_graph,img)
 
               
