@@ -6,6 +6,7 @@ import numpy as np
 import pyqtgraph as pg
 from Matching_image import Template_Matching
 from SIFT import SIFTCornerDetection
+import cv2
 
 
 
@@ -28,7 +29,22 @@ class MainWindow(QTabWidget):
                                                 options=options)
         if file_name:
             self.selected_image_path = file_name
-            self.display_image(self.graphicsLayoutWidget_displayImagesMain,file_name)
+            self.display_image_on_graphics_layout(file_name)
+
+    def display_image_on_graphics_layout(self, image_path):
+        image_data = cv2.imread(image_path)
+        image_data = cv2.cvtColor(image_data, cv2.COLOR_BGR2GRAY)
+        # image_data = cv2.cvtColor(image_data, cv2.COLOR_BGR2RGB)
+        image_data = np.rot90(image_data, -1)
+        # Clear the previous image if any
+        self.graphicsLayoutWidget_displayImagesMain.clear()
+        # Create a PlotItem or ViewBox
+        view_box = self.graphicsLayoutWidget_displayImagesMain.addViewBox()
+        # Create an ImageItem and add it to the ViewBox
+        image_item = pg.ImageItem(image_data)
+        view_box.addItem(image_item)
+        # Optional: Adjust the view to fit the image
+        view_box.autoRange()
 
     def display_image(self,graphics_widget,image_data):
         """Utility function to display an image in a given graphics layout widget."""
