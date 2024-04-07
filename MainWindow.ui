@@ -603,7 +603,7 @@ QTabBar::tab:selected {
 </string>
   </property>
   <property name="currentIndex">
-   <number>3</number>
+   <number>0</number>
   </property>
   <widget class="QWidget" name="ImportMasterImage">
    <attribute name="title">
@@ -908,7 +908,7 @@ QTabBar::tab:selected {
                </font>
               </property>
               <property name="text">
-               <string>After Corner Detection</string>
+               <string>Before Corner Detection</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -1476,7 +1476,7 @@ QTabBar::tab:selected {
                </font>
               </property>
               <property name="text">
-               <string>After Corner Detection</string>
+               <string>Before Corner Detection</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>

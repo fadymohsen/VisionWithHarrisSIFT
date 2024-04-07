@@ -16,7 +16,7 @@ class MainWindow(QMainWindow):
         loadUi('MainWindow.ui', self.tab_widget)
         self.full_screen = False
         self.template_matching = Template_Matching(self)
-        self.template_matching.handle_buttons()   
+        # self.template_matching.handle_buttons()   
 
 
 
