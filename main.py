@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 import numpy as np
 import pyqtgraph as pg
 from Matching_image import Template_Matching
+from SIFT import SIFTCornerDetection
 
 
 
@@ -16,6 +17,7 @@ class MainWindow(QMainWindow):
         loadUi('MainWindow.ui', self.tab_widget)
         self.full_screen = False
         self.template_matching = Template_Matching(self)
+        self.addSIFT = SIFTCornerDetection(self)
         # self.template_matching.handle_buttons()   
 
 
