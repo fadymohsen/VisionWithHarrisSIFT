@@ -9,12 +9,12 @@ class Template_Matching:
         self.template_img = None
 
 
-    # def handle_buttons(self):
-    #     self.ui.matching_image_btn.clicked.connect(self.matching_image) 
-    #     self.ui.matching_method_selection.currentTextChanged.connect(self.matching_image)   
-    #     self.ui.upload_image1.clicked.connect(lambda:self.browse_image(1))
+    def handle_buttons(self):
+        self.ui.matching_image_btn.clicked.connect(self.matching_image) 
+        self.ui.matching_method_selection.currentTextChanged.connect(self.matching_image)   
+        self.ui.upload_image1.clicked.connect(lambda:self.browse_image(1))
         
-    #     self.ui.upload_image2.clicked.connect(lambda:self.browse_image(0))
+        self.ui.upload_image2.clicked.connect(lambda:self.browse_image(0))
     
 
 

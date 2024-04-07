@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTabWidget
+from PyQt5.QtWidgets import QApplication, QTabWidget, QFileDialog
 from PyQt5.uic import loadUi
 from PyQt5.QtCore import Qt
 import numpy as np
@@ -9,19 +10,25 @@ from SIFT import SIFTCornerDetection
 
 
 
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super(MainWindow, self).__init__()
-        self.tab_widget = QTabWidget()
-        self.setCentralWidget(self.tab_widget)
-        loadUi('MainWindow.ui', self.tab_widget)
+class MainWindow(QTabWidget):
+    def __init__(self, ui_file):
+        super().__init__()
+        loadUi(ui_file, self)
         self.full_screen = False
+        self.pushButton_browseImage.clicked.connect(self.browse_image)
         self.template_matching = Template_Matching(self)
         self.addSIFT = SIFTCornerDetection(self)
-        # self.template_matching.handle_buttons()   
+        self.template_matching.handle_buttons()   
 
 
-
+    def browse_image(self):
+        options = QFileDialog.Options()
+        file_name, _ = QFileDialog.getOpenFileName(self, "Select Image", "",
+                                                "Image Files (*.png *.jpg *.jpeg *.bmp *.gif *.webp)",
+                                                options=options)
+        if file_name:
+            self.selected_image_path = file_name
+            self.display_image(self.graphicsLayoutWidget_displayImagesMain,file_name)
 
     def display_image(self,graphics_widget,image_data):
         """Utility function to display an image in a given graphics layout widget."""
@@ -55,6 +62,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication([])
-    window = MainWindow()
+    window = MainWindow("MainWindow.ui")
     window.show()
     app.exec_()
