@@ -33,7 +33,7 @@ class MainWindow(QTabWidget):
             self.selected_image_path = file_name
             self.display_image_on_graphics_layout(file_name)
             self.Harris.UploadImage()
-            self.addSIFT.SIFTDetector()
+            # self.addSIFT.SIFTDetector()
             
 
     def display_image_on_graphics_layout(self, image_path):
