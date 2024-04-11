@@ -1,46 +1,21 @@
 import numpy as np
 import cv2
+import cmath
 import pyqtgraph as pg
 import time
 
-class HarrisCornerDetection():
-    def __init__(self, main_tab_widget):
-        self.main_tab_widget = main_tab_widget
-        self.ui = self.main_tab_widget
 
-
-    def UploadImage(self):
-        if self.main_tab_widget.selected_image_path:
-            imageArray = cv2.imread(self.main_tab_widget.selected_image_path)
-            if imageArray.ndim == 3:
-                imageArray = cv2.cvtColor(imageArray, cv2.COLOR_BGR2GRAY)
-            imageArray = cv2.rotate(imageArray, cv2.ROTATE_90_CLOCKWISE)
-            self.ui.graphicsLayoutWidget_beforeHarris.clear()
-            original_img_item = pg.ImageItem(imageArray)
-            original_view = self.ui.graphicsLayoutWidget_beforeHarris.addViewBox()
-            original_view.addItem(original_img_item)
-            self.original_image = imageArray
-
-
-    # def Browse(self):
-    #     options = QFileDialog.Options()
-    #     fileName, _ = QFileDialog.getOpenFileName(self.ui, "Select Image", "",
-    #                                             "Image Files (*.png *.jpg *.jpeg *.bmp *.gif *.webp)",
-    #                                             options=options)
-    #     if fileName:  # Check if a file was selected
-    #         imageArray = cv2.imread(fileName)  
-
-    #         if imageArray.ndim == 3:  
-    #             imageArray = cv2.cvtColor(imageArray, cv2.COLOR_BGR2GRAY)
-
-    #         # Rotate the image
-    #         imageArray = cv2.rotate(imageArray, cv2.ROTATE_90_CLOCKWISE)
-            
-    #         # Clear existing image
-    #         self.ui.image_noiseBeforeEditing.clear()
-            
-    #         # Display the original image
-    #         self.original_img_item = pg.ImageItem(imageArray)
-    #         original_view = self.ui.image_noiseBeforeEditing.addViewBox()
-    #         original_view.addItem(self.original_img_item)
-    #         self.original_image = imageArray
+img = cv2.imread('images\\free-printable-chess-board1.jpg')
+cv2.imshow('img',img)
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+gray = np.float32(gray)
+start_time = time.time()
+dst = cv2.cornerHarris(gray, 2, 3, 0.04)
+dst = cv2.dilate(dst, None)
+img[dst > 0.01 * dst.max()] = [0, 0, 255]
+end_time = time.time()
+execution_time = end_time - start_time
+print("Computation Time in Harris corner using OpenCV:", execution_time, "seconds")
+cv2.imshow('dst', img)
+if cv2.waitKey(0) == 27:
+    cv2.destroyAllWindows()
