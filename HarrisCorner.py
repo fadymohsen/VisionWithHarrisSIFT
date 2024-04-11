@@ -15,7 +15,7 @@ dst = cv2.dilate(dst, None)
 img[dst > 0.01 * dst.max()] = [0, 0, 255]
 end_time = time.time()
 execution_time = end_time - start_time
-print("Computation Time in Harris corner using OpenCV:", execution_time, "seconds")
+print("Computation Time in Harris corner using OpenCV:", execution_time, "seconds") # approximately equal 0.0034122467041015625 seconds
 cv2.imshow('dst', img)
 if cv2.waitKey(0) == 27:
     cv2.destroyAllWindows()
@@ -52,6 +52,9 @@ class HarrisCornerDetection():
 
 
     def detect_corners(self):
+
+        # Start the timer
+        start_time = time.time()
 
         # Convert image to float32
         image = np.float32(self.original_image)
@@ -95,3 +98,11 @@ class HarrisCornerDetection():
         corners_img_item = pg.ImageItem(corners_image)
         corners_view = self.ui.graphicsLayoutWidget_afterHarris.addViewBox()
         corners_view.addItem(corners_img_item)
+
+        # Stop the timer
+        end_time = time.time()
+        # Calculate the computation time
+        computation_time = end_time - start_time
+        print("Computation Time in Harris corner implemented from scratch:", computation_time, "seconds")
+        # Display computation time on QTextEdit
+        self.ui.textEdit.append("{:.4f} seconds".format(computation_time))
