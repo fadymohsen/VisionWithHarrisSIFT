@@ -5,20 +5,20 @@ import pyqtgraph as pg
 import time
 
 
-img = cv2.imread('images\\free-printable-chess-board1.jpg')
-cv2.imshow('img',img)
-gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-gray = np.float32(gray)
-start_time = time.time()
-dst = cv2.cornerHarris(gray, 2, 3, 0.04)
-dst = cv2.dilate(dst, None)
-img[dst > 0.01 * dst.max()] = [0, 0, 255]
-end_time = time.time()
-execution_time = end_time - start_time
-print("Computation Time in Harris corner using OpenCV:", execution_time, "seconds") # approximately equal 0.0034122467041015625 seconds
-cv2.imshow('dst', img)
-if cv2.waitKey(0) == 27:
-    cv2.destroyAllWindows()
+# img = cv2.imread('images\\free-printable-chess-board1.jpg')
+# cv2.imshow('img',img)
+# gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+# gray = np.float32(gray)
+# start_time = time.time()
+# dst = cv2.cornerHarris(gray, 2, 3, 0.04)
+# dst = cv2.dilate(dst, None)
+# img[dst > 0.01 * dst.max()] = [0, 0, 255]
+# end_time = time.time()
+# execution_time = end_time - start_time
+# print("Computation Time in Harris corner using OpenCV:", execution_time, "seconds") # approximately equal 0.0034122467041015625 seconds
+# cv2.imshow('dst', img)
+# if cv2.waitKey(0) == 27:
+#     cv2.destroyAllWindows()
 
 
 class HarrisCornerDetection():
@@ -28,8 +28,6 @@ class HarrisCornerDetection():
         self.threshold_ratio = 0.01  # Initialize threshold ratio
         self.ui.pushButton.clicked.connect(self.detect_corners)
         self.ui.spinBox_2.valueChanged.connect(self.update_threshold)
-
-
 
 
     def upload_image(self):
@@ -44,9 +42,12 @@ class HarrisCornerDetection():
             original_view.addItem(original_img_item)
             self.original_image = imageArray
 
+
     def update_threshold(self, value):
+
         # Update the threshold ratio when the spinbox value changes
         self.threshold_ratio = value / 100.0  
+
         # Trigger corner detection whenever the threshold changes
         self.detect_corners()
 
@@ -68,15 +69,15 @@ class HarrisCornerDetection():
         IxIy = sobel_x * sobel_y
         IyIy = pow(sobel_y, 2)
 
-        # Apply Gaussian filter to the products of derivatives
+        # Apply Gaussian filter (3*3 kernel size) to the products of derivatives
         sum_IxIx = cv2.GaussianBlur(IxIx, (3,3), 0)  
-        sum_IyIy = cv2.GaussianBlur(IyIy, (3,3), 0)    #  IxIx    IxIy
-        sum_IxIy = cv2.GaussianBlur(IxIy, (3,3), 0)    #  IyIx    IyIy   
+        sum_IyIy = cv2.GaussianBlur(IyIy, (3,3), 0)    
+        sum_IxIy = cv2.GaussianBlur(IxIy, (3,3), 0) 
 
         # Harris Corner Response Calculation
-        k = 0.04
-        det_H = (sum_IxIx * sum_IyIy) - pow(sum_IxIy, 2)
-        trace_H = sum_IxIx + sum_IyIy
+        k = 0.04   # commonly used value for k
+        det_H = (sum_IxIx * sum_IyIy) - pow(sum_IxIy, 2)  # eigenValues multiplication
+        trace_H = sum_IxIx + sum_IyIy                     # eigenValues summation
         harris_response = det_H - k * pow(trace_H, 2)
 
         # Thresholding
@@ -88,12 +89,12 @@ class HarrisCornerDetection():
         corner_mask = (harris_response == harris_response_max) & (harris_response > threshold)
 
 
-        # Highlight corners
+        # Highlight corners wit red spots
         corners_image = cv2.cvtColor(self.original_image, cv2.COLOR_GRAY2BGR)
         corners_image[corner_mask] = [255, 0, 0]  
 
 
-        # Display result
+        # Display the image with the detected corners
         self.ui.graphicsLayoutWidget_afterHarris.clear()
         corners_img_item = pg.ImageItem(corners_image)
         corners_view = self.ui.graphicsLayoutWidget_afterHarris.addViewBox()
@@ -101,8 +102,10 @@ class HarrisCornerDetection():
 
         # Stop the timer
         end_time = time.time()
+
         # Calculate the computation time
         computation_time = end_time - start_time
         print("Computation Time in Harris corner implemented from scratch:", computation_time, "seconds")
+
         # Display computation time on QTextEdit
         self.ui.textEdit.append("{:.4f} seconds".format(computation_time))
