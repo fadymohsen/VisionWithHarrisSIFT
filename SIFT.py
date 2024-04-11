@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import pyqtgraph as pg
+import time
 
 class SIFTCornerDetection:
     def __init__(self, main_tab_widget):
@@ -20,6 +21,7 @@ class SIFTCornerDetection:
             original_view.addItem(original_img_item)
             self.original_image = imageArray
 
+            startTime = time.time()
 
             #Creating a Base Image to start by upsampling by doupling the image in size in both direction
             initialImage = cv2.resize(imageArray, (0, 0), fx=2, fy=2, interpolation= cv2.INTER_LINEAR)
@@ -78,7 +80,59 @@ class SIFTCornerDetection:
                     dog_images_in_octave.append(np.subtract(second_image, first_image))  # ordinary subtraction will not work because the images are unsigned integers
                 DOGImages.append(dog_images_in_octave)
             DOGImages =  np.array(DOGImages)
+
+
+            #Now we Find pixel positions of all scale-space extrema in all octaves
+            #Some constants from openCV implementation found in papers
+            contrastThreshold=0.04
+            threshold = np.floor(0.5 * contrastThreshold / numOfIntervals * 255) 
+
+            keypoints = []
+
+            for octaveIndex, DOGImageInOctave in enumerate(DOGImages):
+                for imageIndex, (firstImage, secondImage, thirdImage) in enumerate(zip(DOGImageInOctave,
+                                                                                        DOGImageInOctave[1:],
+                                                                                          DOGImageInOctave[2:])):
+                    #We exclude a 5px border to avoid edge effects
+                    imageBorderWidthExcluded = 5
+                    for i in range(imageBorderWidthExcluded, firstImage.shape[0] - imageBorderWidthExcluded):
+                        for j in range(imageBorderWidthExcluded, firstImage.shape[1] - imageBorderWidthExcluded):
+                            #extracting 3x3 submatrices centered at pixel (i, j)
+                            firstSubmatrix = firstImage[i-1:i+2, j-1:j+2]
+                            secondSubmatrix = secondImage[i-1:i+2, j-1:j+2]
+                            thirdSubmatrix = thirdImage[i-1:i+2, j-1:j+2]
+                            #Finding if a centred pixel is local minima or maxima
+                            centredPixel = firstSubmatrix[1, 1]
+                            islocalMaxima = False  
+                            islocalMinima = False
+                            if abs(centredPixel)>threshold:
+                                #Checking if it's local maxima
+                                if centredPixel > 0:
+                                    if all(centredPixel >= firstSubmatrix.flatten()) and \
+                                          all(centredPixel >= thirdSubmatrix.flatten()) and \
+                                    all(centredPixel >= secondSubmatrix[0,: ].flatten()) and\
+                                          all(centredPixel >= secondSubmatrix[2,: ].flatten()) and \
+                                    all(centredPixel >= secondSubmatrix[1,0].flatten()) and \
+                                          all(centredPixel >= secondSubmatrix[1,2].flatten()):
+                                        islocalMaxima = True
+                                #Checking if it's local minima
+                                elif centredPixel < 0:
+                                    if all(centredPixel <= firstSubmatrix.flatten()) and \
+                                         all(centredPixel <= thirdSubmatrix.flatten()) and \
+                                    all(centredPixel <= secondSubmatrix[0,: ].flatten()) and\
+                                          all(centredPixel <= secondSubmatrix[2,: ].flatten()) and \
+                                    all(centredPixel <= secondSubmatrix[1,0].flatten()) and \
+                                          all(centredPixel <= secondSubmatrix[1,2].flatten()):
+                                        islocalMinima = True
+                            if (islocalMaxima or islocalMinima):
+                                pass
+
             
+
+            endTime = time.time()
+            totalTime = endTime - startTime
+            self.ui.textEdit_computationTime.setText(str(totalTime))
+
 
     
     def displayFinalImage(self, image):
