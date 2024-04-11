@@ -121,10 +121,10 @@ class HarrisCornerDetection():
         # Calculate the computation time only if it's the first time
         if not hasattr(self, 'computation_time'):
             self.computation_time = end_time - start_time
-            print("Computation Time in Harris corner implemented from scratch:", self.computation_time, "seconds")
+            # print("Computation Time in Harris corner implemented from scratch:", self.computation_time, "seconds")
             # Clear the QTextEdit before appending the new computation time
             self.ui.textEdit.clear()
             # Display computation time on QTextEdit
             self.ui.textEdit.append("{:.4f} seconds".format(self.computation_time))
 
-        print(self.threshold_ratio)
+        # print(self.threshold_ratio)
