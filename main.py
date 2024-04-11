@@ -11,7 +11,6 @@ import cv2
 
 
 
-
 class MainWindow(QTabWidget):
     def __init__(self, ui_file):
         super().__init__()
