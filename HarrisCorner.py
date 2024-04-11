@@ -6,20 +6,20 @@ from PyQt5.QtWidgets import QLabel
 import time
 
 
-img = cv2.imread('images\\free-printable-chess-board1.jpg')
-cv2.imshow('img',img)
-gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-gray = np.float32(gray)
-start_time = time.time()
-dst = cv2.cornerHarris(gray, 2, 3, 0.04)
-dst = cv2.dilate(dst, None)
-img[dst > 0.01 * dst.max()] = [0, 0, 255]
-end_time = time.time()
-execution_time = end_time - start_time
-print("Computation Time in Harris corner using OpenCV:", execution_time, "seconds") # approximately equal 0.0034122467041015625 seconds
-cv2.imshow('dst', img)
-if cv2.waitKey(0) == 27:
-    cv2.destroyAllWindows()
+# img = cv2.imread('images\\free-printable-chess-board1.jpg')
+# cv2.imshow('img',img)
+# gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+# gray = np.float32(gray)
+# start_time = time.time()
+# dst = cv2.cornerHarris(gray, 2, 3, 0.04)
+# dst = cv2.dilate(dst, None)
+# img[dst > 0.01 * dst.max()] = [0, 0, 255]
+# end_time = time.time()
+# execution_time = end_time - start_time
+# print("Computation Time in Harris corner using OpenCV:", execution_time, "seconds") # approximately equal 0.0034122467041015625 seconds
+# cv2.imshow('dst', img)
+# if cv2.waitKey(0) == 27:
+#     cv2.destroyAllWindows()
 
 
 class HarrisCornerDetection():
@@ -32,6 +32,10 @@ class HarrisCornerDetection():
         self.ui.horizontalSlider_6.setMinimum(0)  # Set the minimum value for the slider
         self.ui.horizontalSlider_6.setMaximum(500)  # Set the maximum value for the slider
         self.ui.horizontalSlider_6.setSingleStep(1)  # Set the step for the slider
+         # Create a QLabel to display the current threshold value
+        self.threshold_label = QLabel()
+        self.ui.horizontalLayout_23.addWidget(self.threshold_label)  # Add the label to the layout
+        self.update_threshold_label(self.ui.horizontalSlider_6.value())  # Update the label initially
 
 
     def upload_image(self):
@@ -54,6 +58,12 @@ class HarrisCornerDetection():
 
         # Trigger corner detection whenever the threshold changes
         self.detect_corners()
+        self.update_threshold_label(value)
+
+    def update_threshold_label(self, value):
+        # Update the text of the threshold label
+        self.threshold_label.setText(f": {value}")
+
 
 
     def detect_corners(self):
