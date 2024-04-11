@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import time 
 from PyQt5.QtWidgets import QApplication, QTabWidget, QFileDialog
+
 class Template_Matching:
     def __init__(self,tab_widget) :
         self.ui = tab_widget
