@@ -107,5 +107,7 @@ class HarrisCornerDetection():
         computation_time = end_time - start_time
         print("Computation Time in Harris corner implemented from scratch:", computation_time, "seconds")
 
+        # Clear the QTextEdit before appending the new computation time
+        self.ui.textEdit.clear()
         # Display computation time on QTextEdit
         self.ui.textEdit.append("{:.4f} seconds".format(computation_time))
