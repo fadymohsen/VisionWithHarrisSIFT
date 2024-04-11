@@ -11,7 +11,6 @@ import cv2
 
 
 
-
 class MainWindow(QTabWidget):
     def __init__(self, ui_file):
         super().__init__()
@@ -20,7 +19,7 @@ class MainWindow(QTabWidget):
         self.pushButton_browseImage.clicked.connect(self.browse_image)
         self.template_matching = Template_Matching(self)
         self.addSIFT = SIFTCornerDetection(self)
-        # self.Harris = HarrisCornerDetection(self)
+        self.Harris = HarrisCornerDetection(self)
         self.template_matching.handle_buttons()
 
 
@@ -32,7 +31,7 @@ class MainWindow(QTabWidget):
         if file_name:
             self.selected_image_path = file_name
             self.display_image_on_graphics_layout(file_name)
-            # self.Harris.upload_image()
+            self.Harris.upload_image()
             # self.addSIFT.SIFTDetector()
             
 

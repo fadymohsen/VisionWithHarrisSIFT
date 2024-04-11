@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import cmath
 import pyqtgraph as pg
+from PyQt5.QtWidgets import QLabel
 import time
 
 
@@ -25,9 +26,16 @@ class HarrisCornerDetection():
     def __init__(self, main_tab_widget):
         self.main_tab_widget = main_tab_widget
         self.ui = self.main_tab_widget
-        self.threshold_ratio = 0.01  # Initialize threshold ratio
+        self.threshold_ratio = 0.01  # Initialize threshold ratio 1/100
         self.ui.pushButton.clicked.connect(self.detect_corners)
-        self.ui.spinBox_2.valueChanged.connect(self.update_threshold)
+        self.ui.horizontalSlider_6.valueChanged.connect(self.update_threshold)
+        self.ui.horizontalSlider_6.setMinimum(0)  # Set the minimum value for the slider
+        self.ui.horizontalSlider_6.setMaximum(500)  # Set the maximum value for the slider
+        self.ui.horizontalSlider_6.setSingleStep(1)  # Set the step for the slider
+         # Create a QLabel to display the current threshold value
+        self.threshold_label = QLabel()
+        self.ui.horizontalLayout_23.addWidget(self.threshold_label)  # Add the label to the layout
+        self.update_threshold_label(self.ui.horizontalSlider_6.value())  # Update the label initially
 
 
     def upload_image(self):
@@ -46,10 +54,16 @@ class HarrisCornerDetection():
     def update_threshold(self, value):
 
         # Update the threshold ratio when the spinbox value changes
-        self.threshold_ratio = value / 100.0  
+        self.threshold_ratio = value / 1000.0  
 
         # Trigger corner detection whenever the threshold changes
         self.detect_corners()
+        self.update_threshold_label(value)
+
+    def update_threshold_label(self, value):
+        # Update the text of the threshold label
+        self.threshold_label.setText(f": {value}")
+
 
 
     def detect_corners(self):
@@ -82,6 +96,7 @@ class HarrisCornerDetection():
 
         # Thresholding
         threshold = self.threshold_ratio * np.max(harris_response)
+        # print(np.max(harris_response))
 
         # Non-maximum suppression
         neighborhood_size = 1
@@ -103,11 +118,13 @@ class HarrisCornerDetection():
         # Stop the timer
         end_time = time.time()
 
-        # Calculate the computation time
-        computation_time = end_time - start_time
-        print("Computation Time in Harris corner implemented from scratch:", computation_time, "seconds")
+        # Calculate the computation time only if it's the first time
+        if not hasattr(self, 'computation_time'):
+            self.computation_time = end_time - start_time
+            # print("Computation Time in Harris corner implemented from scratch:", self.computation_time, "seconds")
+            # Clear the QTextEdit before appending the new computation time
+            self.ui.textEdit.clear()
+            # Display computation time on QTextEdit
+            self.ui.textEdit.append("{:.4f} seconds".format(self.computation_time))
 
-        # Clear the QTextEdit before appending the new computation time
-        self.ui.textEdit.clear()
-        # Display computation time on QTextEdit
-        self.ui.textEdit.append("{:.4f} seconds".format(computation_time))
+        # print(self.threshold_ratio)
