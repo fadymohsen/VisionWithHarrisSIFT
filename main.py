@@ -18,7 +18,6 @@ class MainWindow(QTabWidget):
         loadUi(ui_file, self)
         self.full_screen = False
         self.pushButton_browseImage.clicked.connect(self.browse_image)
-        self.pushButton.clicked.connect(lambda: self.Harris.detect_corners())
         self.template_matching = Template_Matching(self)
         self.addSIFT = SIFTCornerDetection(self)
         self.Harris = HarrisCornerDetection(self)
@@ -33,7 +32,7 @@ class MainWindow(QTabWidget):
         if file_name:
             self.selected_image_path = file_name
             self.display_image_on_graphics_layout(file_name)
-            self.Harris.UploadImage()
+            self.Harris.upload_image()
             # self.addSIFT.SIFTDetector()
             
 

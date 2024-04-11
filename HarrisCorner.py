@@ -25,9 +25,14 @@ class HarrisCornerDetection():
     def __init__(self, main_tab_widget):
         self.main_tab_widget = main_tab_widget
         self.ui = self.main_tab_widget
+        self.threshold_ratio = 0.01  # Initialize threshold ratio
+        self.ui.pushButton.clicked.connect(self.detect_corners)
+        self.ui.spinBox_2.valueChanged.connect(self.update_threshold)
 
 
-    def UploadImage(self):
+
+
+    def upload_image(self):
         if self.main_tab_widget.selected_image_path:
             imageArray = cv2.imread(self.main_tab_widget.selected_image_path)
             if imageArray.ndim == 3:
@@ -38,6 +43,12 @@ class HarrisCornerDetection():
             original_view = self.ui.graphicsLayoutWidget_beforeHarris.addViewBox()
             original_view.addItem(original_img_item)
             self.original_image = imageArray
+
+    def update_threshold(self, value):
+        # Update the threshold ratio when the spinbox value changes
+        self.threshold_ratio = value / 100.0  
+        # Trigger corner detection whenever the threshold changes
+        self.detect_corners()
 
 
     def detect_corners(self):
@@ -66,17 +77,18 @@ class HarrisCornerDetection():
         harris_response = det_H - k * pow(trace_H, 2)
 
         # Thresholding
-        threshold_ratio = 0.01
-        threshold = threshold_ratio * np.max(harris_response)
+        threshold = self.threshold_ratio * np.max(harris_response)
 
         # Non-maximum suppression
-        neighborhood_size = 2
+        neighborhood_size = 1
         harris_response_max = cv2.dilate(harris_response, np.ones((neighborhood_size, neighborhood_size)))
         corner_mask = (harris_response == harris_response_max) & (harris_response > threshold)
+
 
         # Highlight corners
         corners_image = cv2.cvtColor(self.original_image, cv2.COLOR_GRAY2BGR)
         corners_image[corner_mask] = [255, 0, 0]  
+
 
         # Display result
         self.ui.graphicsLayoutWidget_afterHarris.clear()
