@@ -96,7 +96,7 @@ class HarrisCornerDetection():
 
         # Thresholding
         threshold = self.threshold_ratio * np.max(harris_response)
-        print(np.max(harris_response))
+        # print(np.max(harris_response))
 
         # Non-maximum suppression
         neighborhood_size = 1
@@ -126,3 +126,5 @@ class HarrisCornerDetection():
             self.ui.textEdit.clear()
             # Display computation time on QTextEdit
             self.ui.textEdit.append("{:.4f} seconds".format(self.computation_time))
+
+        print(self.threshold_ratio)
