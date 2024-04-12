@@ -4,7 +4,7 @@ import time
 from PyQt5.QtWidgets import QApplication, QTabWidget, QFileDialog
 from collections import Counter
 
-class Template_Matching:
+class TemplateMatching:
     def __init__(self,tab_widget) :
         self.ui = tab_widget
         
