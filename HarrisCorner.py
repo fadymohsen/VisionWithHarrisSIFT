@@ -76,7 +76,6 @@ class HarrisCornerDetection():
         self.threshold_label.setText(f": {value}")
 
 
-
     def detect_corners(self):
         # Start the timer
         start_time = time.time()
