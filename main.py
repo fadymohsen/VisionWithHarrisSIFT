@@ -38,7 +38,6 @@ class MainWindow(QTabWidget):
             self.display_image_on_graphics_layout(file_name)
             self.Harris.upload_image()
             self.addSIFT.uploadImageSIFT()
-            # self.addSIFT.SIFTDetector()
             
 
     def display_image_on_graphics_layout(self, image_path):
