@@ -12,25 +12,28 @@ class HarrisCornerDetection():
     def __init__(self, main_tab_widget):
         self.main_tab_widget = main_tab_widget
         self.ui = self.main_tab_widget
-        self.threshold_ratio = 0.01  # Initialize threshold ratio
-        self.ui.pushButton.clicked.connect(self.detect_corners)
-        self.ui.horizontalSlider_6.valueChanged.connect(self.update_label_threshold)
+        # Setup the slider with appropriate scale and initial value
         self.ui.horizontalSlider_6.setMinimum(0)
-        self.ui.horizontalSlider_6.setMaximum(10)
+        self.ui.horizontalSlider_6.setMaximum(10)  # This allows a 0.01 minimum step when divided by 1000
         self.ui.horizontalSlider_6.setSingleStep(1)
-        # Initialize scaled threshold ratio
-        self.scaled_threshold_ratio = self.ui.horizontalSlider_6.value() / 10000.0
-        # Check for label_threshold and update it
+        self.ui.horizontalSlider_6.setValue(1)  # Set slider to 1 which corresponds to 0.01 when divided by 100
+        self.ui.horizontalSlider_6.valueChanged.connect(self.update_label_threshold)
+        
+        # Initialize scaled threshold ratio based on the initial slider value
+        self.scaled_threshold_ratio = self.ui.horizontalSlider_6.value() / 100.0
+        
+        # Initialize the threshold label
         if hasattr(self.ui, 'label_threshold'):
             self.threshold_label = self.ui.label_threshold
-            self.update_label_threshold(self.ui.horizontalSlider_6.value())  # Initialize label text
+            self.update_label_threshold(self.ui.horizontalSlider_6.value())  # Update label text with initial value
         else:
             print("Label 'label_threshold' not found. Check your UI design.")
+        
         self.original_image = None
-
+        self.ui.pushButton.clicked.connect(self.detect_corners)
 
     def update_label_threshold(self, value):
-        # Update the text of the threshold label with current slider value and store scaled value
+        # Calculate and update the scaled threshold ratio and label text
         self.scaled_threshold_ratio = value / 100.0
         if hasattr(self.ui, 'label_threshold'):
             self.ui.label_threshold.setText(f"{self.scaled_threshold_ratio:.2f}")
