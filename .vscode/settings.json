@@ -1,7 +1,10 @@
 {
     "cSpell.words": [
         "imread",
+        "ksize",
+        "ndim",
         "pyqtgraph",
+        "Sobel",
         "Thresholding"
     ]
 }
