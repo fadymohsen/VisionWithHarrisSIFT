@@ -7,9 +7,8 @@ class SIFTCornerDetection:
     def __init__(self, main_tab_widget):
         self.main_tab_widget = main_tab_widget
         self.ui = self.main_tab_widget
-
-
-    def SIFTDetector(self):
+    
+    def uploadImageSIFT(self):
         if self.main_tab_widget.selected_image_path:
             imageArray = cv2.imread(self.main_tab_widget.selected_image_path)
             if imageArray.ndim == 3:
@@ -21,10 +20,12 @@ class SIFTCornerDetection:
             original_view.addItem(original_img_item)
             self.original_image = imageArray
 
+    def SIFTDetector(self):
+
             startTime = time.time()
 
             #Creating a Base Image to start by upsampling by doupling the image in size in both direction
-            initialImage = cv2.resize(imageArray, (0, 0), fx=2, fy=2, interpolation= cv2.INTER_LINEAR)
+            initialImage = cv2.resize(self.original_image, (0, 0), fx=2, fy=2, interpolation= cv2.INTER_LINEAR)
             #Inorder to start the image with sigma = 1.6 we blurr the upsambled image by sigma diff
             #assuming original image has blurr of 0.5 
             startSigma = 1.6
@@ -101,38 +102,37 @@ class SIFTCornerDetection:
                             firstSubmatrix = firstImage[i-1:i+2, j-1:j+2]
                             secondSubmatrix = secondImage[i-1:i+2, j-1:j+2]
                             thirdSubmatrix = thirdImage[i-1:i+2, j-1:j+2]
-                            #Finding if a centred pixel is local minima or maxima
-                            centredPixel = firstSubmatrix[1, 1]
-                            islocalMaxima = False  
-                            islocalMinima = False
-                            if abs(centredPixel)>threshold:
-                                #Checking if it's local maxima
-                                if centredPixel > 0:
-                                    if all(centredPixel >= firstSubmatrix.flatten()) and \
-                                          all(centredPixel >= thirdSubmatrix.flatten()) and \
-                                    all(centredPixel >= secondSubmatrix[0,: ].flatten()) and\
-                                          all(centredPixel >= secondSubmatrix[2,: ].flatten()) and \
-                                    all(centredPixel >= secondSubmatrix[1,0].flatten()) and \
-                                          all(centredPixel >= secondSubmatrix[1,2].flatten()):
-                                        islocalMaxima = True
-                                #Checking if it's local minima
-                                elif centredPixel < 0:
-                                    if all(centredPixel <= firstSubmatrix.flatten()) and \
-                                         all(centredPixel <= thirdSubmatrix.flatten()) and \
-                                    all(centredPixel <= secondSubmatrix[0,: ].flatten()) and\
-                                          all(centredPixel <= secondSubmatrix[2,: ].flatten()) and \
-                                    all(centredPixel <= secondSubmatrix[1,0].flatten()) and \
-                                          all(centredPixel <= secondSubmatrix[1,2].flatten()):
-                                        islocalMinima = True
-                            if (islocalMaxima or islocalMinima):
+                            if (self.isPixelMinimaOrMaxima(firstSubmatrix, secondSubmatrix, thirdSubmatrix, threshold)):
                                 pass
-
-            
+                                  
 
             endTime = time.time()
             totalTime = endTime - startTime
             self.ui.textEdit_computationTime.setText(str(totalTime))
 
+    def isPixelMinimaOrMaxima(self, firstSubmatrix, secondSubmatrix, thirdSubmatrix, threshold):
+        #Finding if a centred pixel is local minima or maxima
+        centredPixel = secondSubmatrix[1, 1]
+        if abs(centredPixel)>threshold:
+            #Checking if it's local maxima
+            if centredPixel > 0:
+                if all(centredPixel >= firstSubmatrix.flatten()) and \
+                    all(centredPixel >= thirdSubmatrix.flatten()) and \
+                all(centredPixel >= secondSubmatrix[0,: ].flatten()) and\
+                    all(centredPixel >= secondSubmatrix[2,: ].flatten()) and \
+                all(centredPixel >= secondSubmatrix[1,0].flatten()) and \
+                    all(centredPixel >= secondSubmatrix[1,2].flatten()):
+                    return True
+            #Checking if it's local minima
+            elif centredPixel < 0:
+                if all(centredPixel <= firstSubmatrix.flatten()) and \
+                    all(centredPixel <= thirdSubmatrix.flatten()) and \
+                all(centredPixel <= secondSubmatrix[0,: ].flatten()) and\
+                    all(centredPixel <= secondSubmatrix[2,: ].flatten()) and \
+                all(centredPixel <= secondSubmatrix[1,0].flatten()) and \
+                    all(centredPixel <= secondSubmatrix[1,2].flatten()):
+                    return True
+        return False
 
     
     def displayFinalImage(self, image):
