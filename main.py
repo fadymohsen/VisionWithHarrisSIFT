@@ -1,13 +1,16 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QTabWidget
+from PyQt5.QtWidgets import QApplication, QTabWidget
 from PyQt5.QtWidgets import QApplication, QTabWidget, QFileDialog
 from PyQt5.uic import loadUi
-from PyQt5.QtCore import Qt
 import numpy as np
 import pyqtgraph as pg
-from Matching_image import Template_Matching
+import cv2
+
+from MatchingImage import TemplateMatching
 from SIFT import SIFTCornerDetection
 from HarrisCorner import HarrisCornerDetection
-import cv2
+
+
+
 
 
 
@@ -18,7 +21,7 @@ class MainWindow(QTabWidget):
         self.full_screen = False
         self.showFullScreen()
         self.pushButton_browseImage.clicked.connect(self.browse_image)
-        self.template_matching = Template_Matching(self)
+        self.template_matching = TemplateMatching(self)
         self.addSIFT = SIFTCornerDetection(self)
         self.Harris = HarrisCornerDetection(self)
         self.template_matching.handle_buttons()
@@ -39,29 +42,12 @@ class MainWindow(QTabWidget):
     def display_image_on_graphics_layout(self, image_path):
         image_data = cv2.imread(image_path)
         image_data = cv2.cvtColor(image_data, cv2.COLOR_BGR2GRAY)
-        # image_data = cv2.cvtColor(image_data, cv2.COLOR_BGR2RGB)
         image_data = np.rot90(image_data, -1)
-        # Clear the previous image if any
         self.graphicsLayoutWidget_displayImagesMain.clear()
-        # Create a PlotItem or ViewBox
         view_box = self.graphicsLayoutWidget_displayImagesMain.addViewBox()
-        # Create an ImageItem and add it to the ViewBox
         image_item = pg.ImageItem(image_data)
         view_box.addItem(image_item)
-        # Optional: Adjust the view to fit the image
         view_box.autoRange()
-
-    def display_image(self,graphics_widget,image_data):
-        """Utility function to display an image in a given graphics layout widget."""
-        if image_data is not None:
-            graphics_widget.clear()
-            image_data = np.rot90(image_data, -1)
-            view_box = graphics_widget.addViewBox()
-            image_item = pg.ImageItem(image_data)
-            view_box.addItem(image_item)
-        else:
-            print("Image data is not available.")
-
 
 
     def keyPressEvent(self, event):
