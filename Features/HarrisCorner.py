@@ -14,7 +14,7 @@ class HarrisCornerDetection():
         self.ui = self.main_tab_widget
         # Setup the slider with appropriate scale and initial value
         self.ui.horizontalSlider_6.setMinimum(0)
-        self.ui.horizontalSlider_6.setMaximum(10)  # This allows a 0.01 minimum step when divided by 1000
+        self.ui.horizontalSlider_6.setMaximum(10)  # This allows a 0.01 minimum step when divided by 100
         self.ui.horizontalSlider_6.setSingleStep(1)
         self.ui.horizontalSlider_6.setValue(1)  # Set slider to 1 which corresponds to 0.01 when divided by 100
         self.ui.horizontalSlider_6.valueChanged.connect(self.update_label_threshold)
