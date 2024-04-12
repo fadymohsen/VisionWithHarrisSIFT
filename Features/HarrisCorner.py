@@ -19,7 +19,7 @@ class HarrisCornerDetection():
         self.ui.horizontalSlider_6.setMaximum(10)
         self.ui.horizontalSlider_6.setSingleStep(1)
         # Initialize scaled threshold ratio
-        self.scaled_threshold_ratio = self.ui.horizontalSlider_6.value() / 1000.0
+        self.scaled_threshold_ratio = self.ui.horizontalSlider_6.value() / 10000.0
         # Check for label_threshold and update it
         if hasattr(self.ui, 'label_threshold'):
             self.threshold_label = self.ui.label_threshold
