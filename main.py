@@ -16,6 +16,7 @@ class MainWindow(QTabWidget):
         super().__init__()
         loadUi(ui_file, self)
         self.full_screen = False
+        self.showFullScreen()
         self.pushButton_browseImage.clicked.connect(self.browse_image)
         self.template_matching = Template_Matching(self)
         self.addSIFT = SIFTCornerDetection(self)
@@ -64,11 +65,11 @@ class MainWindow(QTabWidget):
 
 
     def keyPressEvent(self, event):
-        if event.key() == 16777216:         # Integer value for Qt.Key_Escape
+        if event.key() == 16777216:
             if self.isFullScreen():
-                self.showNormal()           # Show in normal mode
+                self.showNormal()
             else:
-                self.showFullScreen()       # Show in full screen
+                self.showFullScreen()
         else:
             super().keyPressEvent(event)
 
