@@ -17,20 +17,28 @@ class HarrisCornerDetection():
         self.ui.horizontalSlider_6.setMaximum(10)  # This allows a 0.01 minimum step when divided by 100
         self.ui.horizontalSlider_6.setSingleStep(1)
         self.ui.horizontalSlider_6.setValue(1)  # Set slider to 1 which corresponds to 0.01 when divided by 100
+        self.ui.horizontalSlider_6.valueChanged.connect(self.slider_changed)  # Connect directly to the method that handles changes
         self.ui.horizontalSlider_6.valueChanged.connect(self.update_label_threshold)
-        
         # Initialize scaled threshold ratio based on the initial slider value
         self.scaled_threshold_ratio = self.ui.horizontalSlider_6.value() / 100.0
-        
         # Initialize the threshold label
         if hasattr(self.ui, 'label_threshold'):
             self.threshold_label = self.ui.label_threshold
             self.update_label_threshold(self.ui.horizontalSlider_6.value())  # Update label text with initial value
         else:
             print("Label 'label_threshold' not found. Check your UI design.")
-        
         self.original_image = None
         self.ui.pushButton.clicked.connect(self.detect_corners)
+
+
+    def slider_changed(self, value):
+        # Update the threshold based on the slider and run detection
+        self.scaled_threshold_ratio = value / 1000.0
+        if hasattr(self.ui, 'label_threshold'):
+            self.ui.label_threshold.setText(f"Threshold: {self.scaled_threshold_ratio:.3f}")
+        if self.original_image is not None:
+            self.detect_corners()  # Run detection whenever the slider changes and an image is loaded
+
 
     def update_label_threshold(self, value):
         # Calculate and update the scaled threshold ratio and label text
