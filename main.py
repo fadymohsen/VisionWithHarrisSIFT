@@ -21,6 +21,7 @@ class MainWindow(QTabWidget):
         self.addSIFT = SIFTCornerDetection(self)
         self.Harris = HarrisCornerDetection(self)
         self.template_matching.handle_buttons()
+        self.btn_SIFT.clicked.connect(self.addSIFT.SIFTDetector)
 
 
     def browse_image(self):
@@ -32,6 +33,7 @@ class MainWindow(QTabWidget):
             self.selected_image_path = file_name
             self.display_image_on_graphics_layout(file_name)
             self.Harris.upload_image()
+            self.addSIFT.uploadImageSIFT()
             # self.addSIFT.SIFTDetector()
             
 
