@@ -6,10 +6,8 @@ import pyqtgraph as pg
 import cv2
 
 from Features.MatchingImage import TemplateMatching
-from Features.SIFT import SIFTCornerDetection
+from Features.sift import SIFTCornerDetection
 from Features.HarrisCorner import HarrisCornerDetection
-
-
 
 
 
