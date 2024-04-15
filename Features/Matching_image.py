@@ -44,7 +44,9 @@ class TemplateMatching:
 
   
     def Normalised_Cross_Correlation(self,roi, target):
-    # Normalised Cross Correlation Equation
+       # Normalised Cross Correlation Equation
+        roi -=  np.mean(roi)
+        target -= np.mean(target)
         corr=np.sum(roi*target)
         norm = np.sqrt((np.sum(roi**2)))*np.sqrt(np.sum(target**2))
         return corr / norm      
@@ -54,14 +56,15 @@ class TemplateMatching:
     # Normalised Cross Correlation Equation
         SSD=np.sum((roi-target)**2)
         norm = np.sqrt((np.sum(roi**2)))*np.sqrt(np.sum(target**2))
-        return SSD / norm  
+        return SSD / norm
 
     def template_matching(self):
         key2_indices = []
         matching_indics = []
         list_of_scores = []
         method = self.ui.matching_method_selection.currentText()
-       
+      
+
         for i in range(len(self.descriptor_1)):
             if method == "Cross Correlation":
                 threshold_value = 0
@@ -112,20 +115,23 @@ class TemplateMatching:
             if method == "Cross Correlation":
                 threshold_value = 0
             else:
-                threshold_value = 10   
+                threshold_value = 10
 
             for i in indices_list:
                 if method == "Cross Correlation":
                     if list_of_scores[i] > threshold_value:
                         threshold_value = list_of_scores[i]
                         target_idx = i
+                        new_matching_indics.append(matching_indics[target_idx])
+                        new_list_of_scores.append(list_of_scores[target_idx])    
                 else:
                     if list_of_scores[i] < threshold_value:
                         threshold_value = list_of_scores[i]
                         target_idx = i
+                        new_matching_indics.append(matching_indics[target_idx])
+                        new_list_of_scores.append(list_of_scores[target_idx])
 
-            new_matching_indics.append(matching_indics[target_idx])
-            new_list_of_scores.append(list_of_scores[target_idx])
+
             
     
     
@@ -141,7 +147,7 @@ class TemplateMatching:
                 if score > 0.97*threshold_val:
                     max_matches_list.append(list_matches[i])
             else:
-                if score < 0.08*threshold_val:
+                if score < 0.08*threshold_val:  ##0.08
                     max_matches_list.append(list_matches[i])        
         
         return max_matches_list                
