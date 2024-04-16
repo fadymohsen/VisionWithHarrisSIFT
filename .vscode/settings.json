@@ -2,8 +2,11 @@
     "cSpell.words": [
         "imread",
         "ksize",
+        "linalg",
+        "lstsq",
         "ndim",
         "pyqtgraph",
+        "rcond",
         "Sobel",
         "Thresholding"
     ]

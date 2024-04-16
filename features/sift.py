@@ -93,7 +93,7 @@ class SIFTCornerDetection:
                             if (self.isPixelMinimaOrMaxima(firstSubMatrix, secondSubMatrix, thirdSubMatrix, threshold)):
                                 localization_result = self.localizeExtremum(i, j, imageIndex + 1, octaveIndex, numOfIntervals, DOGImageInOctave, startSigma, contrastThreshold, imageBorderWidthExcluded)
                                 if localization_result is not None:
-                                    keypoint, localized_image_index = localization_result
+                                    keyPoint, localized_image_index = localization_result
                                   
 
             endTime = time.time()
@@ -144,7 +144,7 @@ class SIFTCornerDetection:
             i += int(round(extremum_update[1]))
             image_index += int(round(extremum_update[2]))
             # make sure the new pixel_cube will lie entirely within the image
-            if i < imageBorderWidthExcluded or i >= imageShape[0] - imageBorderWidthExcluded or j < imageBorderWidthExcluded or j >= image_shape[1] - imageBorderWidthExcluded or image_index < 1 or image_index > numOfIntervals:
+            if i < imageBorderWidthExcluded or i >= imageShape[0] - imageBorderWidthExcluded or j < imageBorderWidthExcluded or j >= imageShape[1] - imageBorderWidthExcluded or image_index < 1 or image_index > numOfIntervals:
                 extremum_is_outside_image = True
                 break
         if extremum_is_outside_image:
@@ -157,13 +157,13 @@ class SIFTCornerDetection:
             xy_hessian_trace = np.trace(xy_hessian)
             xy_hessian_det = det(xy_hessian)
             if xy_hessian_det > 0 and eigenvalueRatio * (xy_hessian_trace ** 2) < ((eigenvalueRatio + 1) ** 2) * xy_hessian_det:
-                # Contrast check passed -- construct and return OpenCV KeyPoint object
-                keypoint = cv2.KeyPoint()
-                keypoint.pt = ((j + extremum_update[0]) * (2 ** octaveIndex), (i + extremum_update[1]) * (2 ** octaveIndex))
-                keypoint.octave = octaveIndex + image_index * (2 ** 8) + int(round((extremum_update[2] + 0.5) * 255)) * (2 ** 16)
-                keypoint.size = sigma * (2 ** ((image_index + extremum_update[2]) / np.float32(numOfIntervals))) * (2 ** (octaveIndex + 1))  # octaveIndex + 1 because the input image was doubled
-                keypoint.response = abs(functionValueAtUpdatedExtremum)
-                return keypoint, image_index
+                # Contrast check passed -- construct and return OpenCV keyPoint object
+                keyPoint = cv2.keyPoint()
+                keyPoint.pt = ((j + extremum_update[0]) * (2 ** octaveIndex), (i + extremum_update[1]) * (2 ** octaveIndex))
+                keyPoint.octave = octaveIndex + image_index * (2 ** 8) + int(round((extremum_update[2] + 0.5) * 255)) * (2 ** 16)
+                keyPoint.size = sigma * (2 ** ((image_index + extremum_update[2]) / np.float32(numOfIntervals))) * (2 ** (octaveIndex + 1))  # octaveIndex + 1 because the input image was doubled
+                keyPoint.response = abs(functionValueAtUpdatedExtremum)
+                return keyPoint, image_index
         return None
 
     def computeGradientAtCenterPixel(self, pixelArray):
