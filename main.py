@@ -5,9 +5,9 @@ import numpy as np
 import pyqtgraph as pg
 import cv2
 
-from Features.MatchingImage import TemplateMatching
-from Features.sift import SIFTCornerDetection
-from Features.HarrisCorner import HarrisCornerDetection
+from features.Matching_image import TemplateMatching
+from features.sift import SIFTCornerDetection
+from features.HarrisCorner import HarrisCornerDetection
 
 
 
@@ -47,6 +47,17 @@ class MainWindow(QTabWidget):
         image_item = pg.ImageItem(image_data)
         view_box.addItem(image_item)
         view_box.autoRange()
+
+
+    def display_image(self,graph_name ,image_data):
+        # image_data = cv2.imread(image_path)
+        # image_data = cv2.cvtColor(image_data, cv2.COLOR_BGR2GRAY)
+        image_data = np.rot90(image_data, -1)
+        graph_name.clear()
+        view_box = graph_name.addViewBox()
+        image_item = pg.ImageItem(image_data)
+        view_box.addItem(image_item)
+        view_box.autoRange()    
 
 
     def keyPressEvent(self, event):
