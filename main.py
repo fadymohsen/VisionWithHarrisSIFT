@@ -5,9 +5,9 @@ import numpy as np
 import pyqtgraph as pg
 import cv2
 
-from features.Matching_image import TemplateMatching
-from features.sift import SIFTCornerDetection
-from features.HarrisCorner import HarrisCornerDetection
+from Features.MatchingImage import TemplateMatching
+from Features.sift import SIFTCornerDetection
+from Features.HarrisCorner import HarrisCornerDetection
 
 
 
