@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import pyqtgraph as pg
 import time
-
+from numpy.linalg import det, lstsq, norm
 
 
 
@@ -51,7 +51,7 @@ class SIFTCornerDetection:
                 gaussianKernels[image_index] = np.sqrt(sigma_total ** 2 - sigma_previous ** 2)
             #Finding the Gaussian Images for each octave to prepare for DOG
             gaussianImages = []
-            for octave_index in range(numOfOctaves):
+            for octaveIndex in range(numOfOctaves):
                 gaussian_images_in_octave = []
                 gaussian_images_in_octave.append(baseImage)  # first image in octave already has the correct blur
                 for gaussianKernel in gaussianKernels[1:]:
@@ -91,7 +91,9 @@ class SIFTCornerDetection:
                             secondSubMatrix = secondImage[i-1:i+2, j-1:j+2]
                             thirdSubMatrix = thirdImage[i-1:i+2, j-1:j+2]
                             if (self.isPixelMinimaOrMaxima(firstSubMatrix, secondSubMatrix, thirdSubMatrix, threshold)):
-                                pass
+                                localization_result = self.localizeExtremum(i, j, imageIndex + 1, octaveIndex, numOfIntervals, DOGImageInOctave, startSigma, contrastThreshold, imageBorderWidthExcluded)
+                                if localization_result is not None:
+                                    keypoint, localized_image_index = localization_result
                                   
 
             endTime = time.time()
@@ -123,6 +125,66 @@ class SIFTCornerDetection:
                     return True
         return False
 
+    def localizeExtremum(self, i, j, image_index, octaveIndex, numOfIntervals, DOGImageInOctave, sigma, contrastThreshold, imageBorderWidthExcluded, eigenvalueRatio=10, num_attempts_until_convergence=5):
+        #Iteratively refine pixel positions of scale-space extrema 
+        extremum_is_outside_image = False
+        imageShape = DOGImageInOctave[0].shape
+        for attempt_index in range(num_attempts_until_convergence):
+            # need to convert from uint8 to float32 to compute derivatives and need to rescale pixel values to [0, 1] to apply Lowe's thresholds
+            firstImage, secondImage, thirdImage = DOGImageInOctave[image_index-1:image_index+2]
+            pixel_cube = np.stack([firstImage[i-1:i+2, j-1:j+2],
+                                secondImage[i-1:i+2, j-1:j+2],
+                                thirdImage[i-1:i+2, j-1:j+2]]).astype('float32') / 255.
+            gradient = self.computeGradientAtCenterPixel(pixel_cube)
+            hessian = self.computeHessianAtCenterPixel(pixel_cube)
+            extremum_update = -lstsq(hessian, gradient, rcond=None)[0]
+            if abs(extremum_update[0]) < 0.5 and abs(extremum_update[1]) < 0.5 and abs(extremum_update[2]) < 0.5:
+                break
+            j += int(round(extremum_update[0]))
+            i += int(round(extremum_update[1]))
+            image_index += int(round(extremum_update[2]))
+            # make sure the new pixel_cube will lie entirely within the image
+            if i < imageBorderWidthExcluded or i >= imageShape[0] - imageBorderWidthExcluded or j < imageBorderWidthExcluded or j >= image_shape[1] - imageBorderWidthExcluded or image_index < 1 or image_index > numOfIntervals:
+                extremum_is_outside_image = True
+                break
+        if extremum_is_outside_image:
+            return None
+        if attempt_index >= num_attempts_until_convergence - 1:
+            return None
+        functionValueAtUpdatedExtremum = pixel_cube[1, 1, 1] + 0.5 * np.dot(gradient, extremum_update)
+        if abs(functionValueAtUpdatedExtremum) * numOfIntervals >= contrastThreshold:
+            xy_hessian = hessian[:2, :2]
+            xy_hessian_trace = np.trace(xy_hessian)
+            xy_hessian_det = det(xy_hessian)
+            if xy_hessian_det > 0 and eigenvalueRatio * (xy_hessian_trace ** 2) < ((eigenvalueRatio + 1) ** 2) * xy_hessian_det:
+                # Contrast check passed -- construct and return OpenCV KeyPoint object
+                keypoint = cv2.KeyPoint()
+                keypoint.pt = ((j + extremum_update[0]) * (2 ** octaveIndex), (i + extremum_update[1]) * (2 ** octaveIndex))
+                keypoint.octave = octaveIndex + image_index * (2 ** 8) + int(round((extremum_update[2] + 0.5) * 255)) * (2 ** 16)
+                keypoint.size = sigma * (2 ** ((image_index + extremum_update[2]) / np.float32(numOfIntervals))) * (2 ** (octaveIndex + 1))  # octaveIndex + 1 because the input image was doubled
+                keypoint.response = abs(functionValueAtUpdatedExtremum)
+                return keypoint, image_index
+        return None
+
+    def computeGradientAtCenterPixel(self, pixelArray):
+        #Approximate gradient at center pixel [1, 1, 1] of 3x3x3 array using central difference formula , where h is the step size
+        # Here h = 1, so the formula simplifies to f'(x) = (f(x + 1) - f(x - 1)) / 2
+        dx = 0.5 * (pixelArray[1, 1, 2] - pixelArray[1, 1, 0])
+        dy = 0.5 * (pixelArray[1, 2, 1] - pixelArray[1, 0, 1])
+        ds = 0.5 * (pixelArray[2, 1, 1] - pixelArray[0, 1, 1])
+        return np.array([dx, dy, ds])
+
+    def computeHessianAtCenterPixel(self, pixelArray):
+        center_pixel_value = pixelArray[1, 1, 1]
+        dxx = pixelArray[1, 1, 2] - 2 * center_pixel_value + pixelArray[1, 1, 0]
+        dyy = pixelArray[1, 2, 1] - 2 * center_pixel_value + pixelArray[1, 0, 1]
+        dss = pixelArray[2, 1, 1] - 2 * center_pixel_value + pixelArray[0, 1, 1]
+        dxy = 0.25 * (pixelArray[1, 2, 2] - pixelArray[1, 2, 0] - pixelArray[1, 0, 2] + pixelArray[1, 0, 0])
+        dxs = 0.25 * (pixelArray[2, 1, 2] - pixelArray[2, 1, 0] - pixelArray[0, 1, 2] + pixelArray[0, 1, 0])
+        dys = 0.25 * (pixelArray[2, 2, 1] - pixelArray[2, 0, 1] - pixelArray[0, 2, 1] + pixelArray[0, 0, 1])
+        return np.array([[dxx, dxy, dxs], 
+                            [dxy, dyy, dys],
+                            [dxs, dys, dss]])
     
     def displayFinalImage(self, image):
         self.ui.graphicsLayoutWidget_afterSIFT.clear()
