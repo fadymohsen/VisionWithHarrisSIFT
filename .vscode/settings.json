@@ -14,6 +14,7 @@
         "ksize",
         "linalg",
         "lstsq",
+        "ndarray",
         "ndim",
         "newimg",
         "polylines",
