@@ -217,3 +217,32 @@ class SIFTCornerDetection:
 
             dominant_orientation = np.argmax(hist) * (360.0 / num_bins)
             keypoint.angle = dominant_orientation  # Adding orientation to the keypoint
+
+
+
+    def createDescriptors(self, keypoints, gaussianImage):
+        descriptor_length = 128  # 16x16 neighborhood, divided into 4x4 blocks, each contributes 8 bins histogram
+        keypoint_descriptors = []
+
+        for keypoint in keypoints:
+            descriptor = np.zeros(descriptor_length)
+            angle = 360 - keypoint.angle
+            angle_rad = np.deg2rad(angle)
+            cos_angle = np.cos(angle_rad)
+            sin_angle = np.sin(angle_rad)
+            # 16x16 neighborhood around the keypoint
+            for i in range(-8, 8):
+                for j in range(-8, 8):
+                    # Rotate point by keypoint orientation
+                    x_rotated = int(keypoint.pt[0] + (j * cos_angle - i * sin_angle))
+                    y_rotated = int(keypoint.pt[1] + (j * sin_angle + i * cos_angle))
+                    if 0 <= x_rotated < gaussianImage.shape[1] and 0 <= y_rotated < gaussianImage.shape[0]:
+                        dx = gaussianImage[y_rotated, x_rotated + 1] - gaussianImage[y_rotated, x_rotated - 1]
+                        dy = gaussianImage[y_rotated + 1, x_rotated] - gaussianImage[y_rotated - 1, x_rotated]
+                        magnitude = np.sqrt(dx * dx + dy * dy)
+                        orientation = (np.rad2deg(np.arctan2(dy, dx)) - angle) % 360
+                        bin_idx = int((orientation / 360) * descriptor_length)
+                        descriptor[bin_idx] += magnitude
+            keypoint_descriptors.append(descriptor / np.linalg.norm(descriptor))  # Normalize the descriptor
+
+        return keypoint_descriptors
