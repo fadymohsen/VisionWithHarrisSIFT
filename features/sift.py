@@ -95,11 +95,23 @@ class SIFTCornerDetection:
                                 localization_result = self.localizeExtremum(i, j, imageIndex + 1, octaveIndex, numOfIntervals, DOGImageInOctave, startSigma, contrastThreshold, imageBorderWidthExcluded)
                                 if localization_result is not None:
                                     keyPoint, localized_image_index = localization_result
-                                  
 
+
+
+             # After collecting all keypoints, compute their orientations
+            for octaveIndex, gaussian_images_in_octave in enumerate(gaussianImages):
+                self.computeKeypointOrientations(keyPoints, gaussian_images_in_octave[0])  # Using the first Gaussian image in each octave for orientation
+
+            # Now create descriptors for each keypoint
+            descriptors = self.createDescriptors(keyPoints, gaussian_images_in_octave[0])  # Assuming you use the same image for simplicity
+
+                                  
             endTime = time.time()
             totalTime = endTime - startTime
-            self.ui.textEdit_computationTime.setText(str(totalTime))
+            self.ui.label_SIFTcomputationTime.setText(str(totalTime))
+            # Example final call to display image
+            # Display the processed image with keypoints
+            self.displayFinalImage(self.original_image)
 
 
     def isPixelMinimaOrMaxima(self, firstSubMatrix, secondSubMatrix, thirdSubMatrix, threshold):
@@ -188,10 +200,15 @@ class SIFTCornerDetection:
                             [dxs, dys, dss]])
     
     def displayFinalImage(self, image):
-        self.ui.graphicsLayoutWidget_afterSIFT.clear()
-        original_img_item = pg.ImageItem(image)
-        original_view = self.ui.graphicsLayoutWidget_afterSIFT.addViewBox()
-        original_view.addItem(original_img_item)
+        try:
+            self.ui.graphicsLayoutWidget_afterSIFT.clear()
+            original_img_item = pg.ImageItem(image)
+            original_view = self.ui.graphicsLayoutWidget_afterSIFT.addViewBox()
+            original_view.addItem(original_img_item)
+        except Exception as e:
+            print("Failed to display image:", e)
+
+
         
 
 

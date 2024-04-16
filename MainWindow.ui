@@ -1480,7 +1480,7 @@ QTabBar::tab:selected {
                </font>
               </property>
               <property name="text">
-               <string>Before Corner Detection</string>
+               <string>Before SIFT</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -1541,6 +1541,22 @@ QTabBar::tab:selected {
            </widget>
           </item>
           <item>
+           <spacer name="verticalSpacer_12">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
            <spacer name="horizontalSpacer_18">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -1586,7 +1602,7 @@ QTabBar::tab:selected {
                </font>
               </property>
               <property name="text">
-               <string>After Corner Detection</string>
+               <string>After SIFT</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -1618,22 +1634,6 @@ QTabBar::tab:selected {
            </layout>
           </item>
          </layout>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_12">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_11">
@@ -1691,13 +1691,7 @@ QTabBar::tab:selected {
              </widget>
             </item>
             <item>
-             <widget class="QTextEdit" name="textEdit_computationTime">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
+             <widget class="QLabel" name="label_SIFTcomputationTime">
               <property name="minimumSize">
                <size>
                 <width>300</width>
@@ -1710,14 +1704,11 @@ QTabBar::tab:selected {
                 <height>50</height>
                </size>
               </property>
-              <property name="toolTipDuration">
-               <number>-1</number>
+              <property name="text">
+               <string/>
               </property>
-              <property name="styleSheet">
-               <string notr="true">size:15px</string>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
