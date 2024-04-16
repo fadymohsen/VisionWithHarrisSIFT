@@ -11,6 +11,7 @@ class SIFTCornerDetection:
     def __init__(self, main_tab_widget):
         self.main_tab_widget = main_tab_widget
         self.ui = self.main_tab_widget
+        self.sigma = 1.6  # Example, adjust based on your Gaussian blurring
 
     
     def uploadImageSIFT(self):
@@ -158,7 +159,7 @@ class SIFTCornerDetection:
             xy_hessian_det = det(xy_hessian)
             if xy_hessian_det > 0 and eigenvalueRatio * (xy_hessian_trace ** 2) < ((eigenvalueRatio + 1) ** 2) * xy_hessian_det:
                 # Contrast check passed -- construct and return OpenCV keyPoint object
-                keyPoint = cv2.keyPoint()
+                keyPoint = cv2.KeyPoint()
                 keyPoint.pt = ((j + extremum_update[0]) * (2 ** octaveIndex), (i + extremum_update[1]) * (2 ** octaveIndex))
                 keyPoint.octave = octaveIndex + image_index * (2 ** 8) + int(round((extremum_update[2] + 0.5) * 255)) * (2 ** 16)
                 keyPoint.size = sigma * (2 ** ((image_index + extremum_update[2]) / np.float32(numOfIntervals))) * (2 ** (octaveIndex + 1))  # octaveIndex + 1 because the input image was doubled
