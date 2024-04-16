@@ -1,13 +1,28 @@
 {
     "cSpell.words": [
+        "arctan",
+        "dtype",
+        "FLANN",
+        "Gaussians",
+        "hdif",
+        "homography",
         "imread",
+        "KDTREE",
+        "keypoint",
+        "Keypoints",
         "ksize",
         "linalg",
         "lstsq",
         "ndim",
+        "newimg",
+        "polylines",
         "pyqtgraph",
+        "pysift",
+        "RANSAC",
         "rcond",
         "Sobel",
-        "Thresholding"
+        "subimage",
+        "Thresholding",
+        "upsampling"
     ]
 }
