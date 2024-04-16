@@ -192,3 +192,28 @@ class SIFTCornerDetection:
         original_view = self.ui.graphicsLayoutWidget_afterSIFT.addViewBox()
         original_view.addItem(original_img_item)
         
+
+
+    def computeKeypointOrientations(self, keypoints, gaussianImage):
+        # Constants for orientation computation
+        radius = 3 * self.sigma
+        num_bins = 36
+        hist = np.zeros(num_bins)
+
+        for keypoint in keypoints:
+            x, y = int(keypoint.pt[0]), int(keypoint.pt[1])
+            weight_window = gaussianImage[y - radius:y + radius + 1, x - radius:x + radius + 1]
+            exp_scale = -1 / (2.0 * (0.5 * (2 * radius) * (0.5 * (2 * radius))))
+
+            for i in range(-radius, radius + 1):
+                for j in range(-radius, radius + 1):
+                    if (0 <= y + i < gaussianImage.shape[0]) and (0 <= x + j < gaussianImage.shape[1]):
+                        dx = gaussianImage[y + i, x + j + 1] - gaussianImage[y + i, x + j - 1]
+                        dy = gaussianImage[y + i + 1, x + j] - gaussianImage[y + i - 1, x + j]
+                        magnitude = np.sqrt(dx * dx + dy * dy)
+                        orientation = np.rad2deg(np.arctan2(dy, dx)) % 360
+                        weight = np.exp(exp_scale * (i * i + j * j)) * magnitude
+                        hist[int(orientation // (360 // num_bins))] += weight
+
+            dominant_orientation = np.argmax(hist) * (360.0 / num_bins)
+            keypoint.angle = dominant_orientation  # Adding orientation to the keypoint
