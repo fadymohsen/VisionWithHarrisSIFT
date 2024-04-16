@@ -95,15 +95,16 @@ class SIFTCornerDetection:
                                 localization_result = self.localizeExtremum(i, j, imageIndex + 1, octaveIndex, numOfIntervals, DOGImageInOctave, startSigma, contrastThreshold, imageBorderWidthExcluded)
                                 if localization_result is not None:
                                     keyPoint, localized_image_index = localization_result
+                                    keyPoints.append(keyPoint)
 
 
 
              # After collecting all keypoints, compute their orientations
-            for octaveIndex, gaussian_images_in_octave in enumerate(gaussianImages):
-                self.computeKeypointOrientations(keyPoints, gaussian_images_in_octave[0])  # Using the first Gaussian image in each octave for orientation
+            # for octaveIndex, gaussian_images_in_octave in enumerate(gaussianImages):
+            #     self.computeKeypointOrientations(keyPoints, gaussian_images_in_octave[0])  # Using the first Gaussian image in each octave for orientation
 
-            # Now create descriptors for each keypoint
-            descriptors = self.createDescriptors(keyPoints, gaussian_images_in_octave[0])  # Assuming you use the same image for simplicity
+            # # Now create descriptors for each keypoint
+            # descriptors = self.createDescriptors(keyPoints, gaussian_images_in_octave[0])  # Assuming you use the same image for simplicity
 
                                   
             endTime = time.time()
@@ -112,7 +113,7 @@ class SIFTCornerDetection:
             # Example final call to display image
             # Display the processed image with keypoints
             # self.displayFinalImage(self.original_image)
-            self.displayFinalImage( self.original_image, keyPoint)
+            self.displayFinalImage( self.original_image, keyPoints)
     
 
     def isPixelMinimaOrMaxima(self, firstSubMatrix, secondSubMatrix, thirdSubMatrix, threshold):
@@ -206,9 +207,6 @@ class SIFTCornerDetection:
         original_view = self.ui.graphicsLayoutWidget_afterSIFT.addViewBox()
         original_view.addItem(original_img_item)
         print ("hi1")
-
-        if not isinstance(keyPoints, list):
-            keyPoints = [keyPoints]
         
         keyPoints_tuples = [(int(kp.pt[0]), int(kp.pt[1])) for kp in keyPoints]
         # Add red dots for keypoints
