@@ -111,8 +111,9 @@ class SIFTCornerDetection:
             self.ui.label_SIFTcomputationTime.setText(str(totalTime))
             # Example final call to display image
             # Display the processed image with keypoints
-            self.displayFinalImage(self.original_image)
-
+            # self.displayFinalImage(self.original_image)
+            self.displayFinalImage( self.original_image, keyPoint)
+    
 
     def isPixelMinimaOrMaxima(self, firstSubMatrix, secondSubMatrix, thirdSubMatrix, threshold):
         #Finding if a centred pixel is local minima or maxima
@@ -199,14 +200,28 @@ class SIFTCornerDetection:
                             [dxy, dyy, dys],
                             [dxs, dys, dss]])
     
-    def displayFinalImage(self, image):
-        try:
-            self.ui.graphicsLayoutWidget_afterSIFT.clear()
-            original_img_item = pg.ImageItem(image)
-            original_view = self.ui.graphicsLayoutWidget_afterSIFT.addViewBox()
-            original_view.addItem(original_img_item)
-        except Exception as e:
-            print("Failed to display image:", e)
+    def displayFinalImage(self, image, keyPoints):
+        self.ui.graphicsLayoutWidget_afterSIFT.clear()
+        original_img_item = pg.ImageItem(image)
+        original_view = self.ui.graphicsLayoutWidget_afterSIFT.addViewBox()
+        original_view.addItem(original_img_item)
+        print ("hi1")
+
+        if not isinstance(keyPoints, list):
+            keyPoints = [keyPoints]
+        
+        keyPoints_tuples = [(int(kp.pt[0]), int(kp.pt[1])) for kp in keyPoints]
+        # Add red dots for keypoints
+        keyPoints_x = [kp[1] for kp in keyPoints_tuples]
+        keyPoints_y = [kp[0] for kp in keyPoints_tuples]
+        keyPoints_size = 5  # Adjust the size of the red dots if needed
+        keyPoints_pen = pg.mkPen(None)  # No outline for the red dots
+        keyPoints_brush = pg.mkBrush('r')  # Red fill color for the red dots
+        keyPoints_item = pg.ScatterPlotItem(size=keyPoints_size, pen=keyPoints_pen, brush=keyPoints_brush)
+        keyPoints_item.setData(pos=list(zip(keyPoints_x, keyPoints_y)))
+        print('hi2')
+        original_view.addItem(keyPoints_item)
+        print('hi3')
 
 
         
