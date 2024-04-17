@@ -3,7 +3,7 @@ import cv2
 import time 
 from PyQt5.QtWidgets import QApplication, QTabWidget, QFileDialog
 from collections import Counter
-
+from Features.sift import SIFTCornerDetection
 class TemplateMatching:
     def __init__(self,tab_widget) :
         self.ui = tab_widget
@@ -12,6 +12,7 @@ class TemplateMatching:
         self.template_img = None
         self.descriptor_1, self.key_points_1 = None, None
         self.descriptor_2, self.key_points_2 = None, None
+        self.sift = SIFTCornerDetection(tab_widget)
 
     def handle_buttons(self):
         self.ui.matching_method_selection.currentTextChanged.connect(self.matching_image)   
@@ -26,19 +27,25 @@ class TemplateMatching:
         file_path, _ = QFileDialog.getOpenFileName(self.ui, "Select Image", "",
                                                 "Image Files (*.png *.jpg *.jpeg *.bmp *.gif *.webp)",
                                                 options=options)
-        sift = cv2.SIFT_create()
+        # sift = cv2.SIFT_create()
+
 
         
         if idx :
             self.img = cv2.imread(file_path)
             self.ui.display_image(self.ui.originial_image_graph,self.img)
             ## get descriptor and keypointsfor image 
-            self.key_points_1, self.descriptor_1 = sift.detectAndCompute(self.img,None)
+            # self.key_points_1, self.descriptor_1 = sift.detectAndCompute(self.img,None)
+            self.sift.uploadImageForMatching(file_path)
+            self.key_points_1, self.descriptor_1 = self.sift.get_keypoints_descriptors()
+            
         else:
             self.template_img = cv2.imread(file_path)  
             self.ui.display_image(self.ui.template_image_graph,self.template_img)  
             ## get descriptor and keypointsfor image 
-            self.key_points_2, self.descriptor_2 = sift.detectAndCompute(self.template_img,None)
+            # self.key_points_2, self.descriptor_2 = sift.detectAndCompute(self.template_img,None)
+            self.sift.uploadImageForMatching(file_path)
+            self.key_points_2, self.descriptor_2 = self.sift.get_keypoints_descriptors()
                                                 
 
 
