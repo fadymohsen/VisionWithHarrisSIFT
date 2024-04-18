@@ -603,7 +603,7 @@ QTabBar::tab:selected {
 </string>
   </property>
   <property name="currentIndex">
-   <number>2</number>
+   <number>1</number>
   </property>
   <widget class="QWidget" name="ImportMasterImage">
    <attribute name="title">
@@ -989,22 +989,17 @@ QTabBar::tab:selected {
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>160</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>Corner Detection</string>
-                </property>
+               <widget class="QComboBox" name="comboBox">
+                <item>
+                 <property name="text">
+                  <string>Harris</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Lambda Minus</string>
+                 </property>
+                </item>
                </widget>
               </item>
               <item>
