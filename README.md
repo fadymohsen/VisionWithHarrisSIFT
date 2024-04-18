@@ -1,6 +1,3 @@
-Creating a README file for a repository or project that covers Harris corner detection, Lambda Minus, SIFT, and Feature Matching would be a valuable resource. Below is a template for such a README file, designed to provide an overview of each topic and how they relate to a common application or project in computer vision.
-
-```markdown
 # Computer Vision Feature Detection and Matching
 
 This repository provides implementations and examples for several key computer vision algorithms focused on feature detection and matching. The following techniques are covered:
@@ -72,12 +69,8 @@ Guidelines for contributing to the repository, including coding standards, pull 
 Specify the license under which the project is released.
 
 ## Authors
-
-- **Your Name**
-
-## Acknowledgments
-
-Credits to contributors, third-party libraries or any references used in the project.
-```
-
-This README provides a comprehensive guide for users interested in exploring and using these algorithms. Adjust the contents based on the specific details of your project, including installation instructions, code examples, and additional resources.
+- Fady Mohsen
+- Lammes Mohamad
+- Lama Zakaria
+- Rana Ibrahim
+- Camellia Marwan
