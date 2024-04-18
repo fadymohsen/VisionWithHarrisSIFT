@@ -66,43 +66,67 @@ class HarrisCornerDetection():
         if self.original_image is None:
             print("No image loaded.")
             return  # Exit the function if no image has been loaded
+        
         # Start the timer
         start_time = time.time()
+        
         # Convert image to float32
         image = np.float32(self.original_image)
+
         # Calculate derivatives (image gradients) using Sobel operator
         sobel_x = cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize=3)
         sobel_y = cv2.Sobel(image, cv2.CV_64F, 0, 1, ksize=3)
+        
         # Calculate products of derivatives
         IxIx = pow(sobel_x, 2)
         IxIy = sobel_x * sobel_y
         IyIy = pow(sobel_y, 2)
+
         # Apply Gaussian filter (3*3 kernel size) to the products of derivatives
         sum_IxIx = cv2.GaussianBlur(IxIx, (3,3), 0)  
         sum_IyIy = cv2.GaussianBlur(IyIy, (3,3), 0)    
         sum_IxIy = cv2.GaussianBlur(IxIy, (3,3), 0) 
+
         # Harris Corner Response Calculation
         k = 0.04   # commonly used value for k
         det_H = (sum_IxIx * sum_IyIy) - pow(sum_IxIy, 2)  # eigenValues multiplication
         trace_H = sum_IxIx + sum_IyIy                     # eigenValues summation
         harris_response = det_H - k * pow(trace_H, 2)
-        # Thresholding
-        threshold = self.scaled_threshold_ratio * np.max(harris_response)
+        
+        # Form the structure tensor M
+        M = np.zeros((2, 2), dtype=float)
+        M[0, 0] = np.sum(sum_IxIx)
+        M[0, 1] = np.sum(sum_IxIy)
+        M[1, 0] = M[0, 1]
+        M[1, 1] = np.sum(sum_IyIy)
+
+        # Compute lambda minus using the structure tensor eigenvalues
+        eigenvalues = np.linalg.eigvalsh(M)
+        lambda_minus = np.min(eigenvalues)
+        threshold_lambda = 0.05 * lambda_minus
+
+        # Update threshold based on slider value
+        threshold = self.scaled_threshold_ratio * np.max(harris_response) + threshold_lambda
+    
         # Non-maximum suppression
         neighborhood_size = 1
         harris_response_max = cv2.dilate(harris_response, np.ones((neighborhood_size, neighborhood_size)))
         corner_mask = (harris_response == harris_response_max) & (harris_response > threshold)
+          
         # Highlight corners wit red spots
         corners_image = cv2.cvtColor(self.original_image, cv2.COLOR_GRAY2BGR)
-        corners_image[corner_mask] = [255, 0, 0]  
+        corners_image[corner_mask] = [255, 0, 0] 
+       
         # Display the image with the detected corners
         self.ui.graphicsLayoutWidget_afterHarris.clear()
         corners_img_item = pg.ImageItem(corners_image)
         corners_view = self.ui.graphicsLayoutWidget_afterHarris.addViewBox()
         corners_view.addItem(corners_img_item)
+      
         # Stop the timer
         end_time = time.time()
         self.computation_time = end_time - start_time
+        
         if hasattr(self.ui, 'label_computationalTime'):
             self.ui.label_computationalTime.setText(f"{self.computation_time:.4f} sec")
         else:
