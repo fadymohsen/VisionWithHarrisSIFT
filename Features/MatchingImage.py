@@ -8,6 +8,7 @@ from Features.sift import SIFT
 
 
 
+
 class TemplateMatching:
     def __init__(self,tab_widget) :
         self.ui = tab_widget
@@ -17,12 +18,16 @@ class TemplateMatching:
         self.descriptor_2, self.key_points_2 = None, None
 
 
+
+
+
     def handle_buttons(self):
         self.ui.matching_method_selection.currentTextChanged.connect(self.matching_image)   
         self.ui.upload_image1.clicked.connect(lambda:self.browse_image(1))
         
         self.ui.upload_image2.clicked.connect(lambda:self.browse_image(0))
     
+
 
     def browse_image(self,idx):
         options = QFileDialog.Options()
@@ -50,6 +55,7 @@ class TemplateMatching:
             self.key_points_2, self.descriptor_2 = sift_instance.sift()
                                                 
   
+
     def Normalised_Cross_Correlation(self,roi, target):
        # Normalised Cross Correlation Equation
         # roi -=  np.mean(roi)
@@ -59,11 +65,13 @@ class TemplateMatching:
         return corr / norm      
     
 
+
     def Normalised_Sum_Square_difference(self,roi, target):
     # Normalised Cross Correlation Equation
         SSD=np.sum((roi-target)**2)
         norm = np.sqrt((np.sum(roi**2)))*np.sqrt(np.sum(target**2))
         return SSD / norm
+
 
 
     def template_matching(self):
@@ -100,6 +108,7 @@ class TemplateMatching:
         return matching_indics,list_of_scores,key2_indices 
     
     
+
     def filter_repeated_points(self,matching_indics,list_of_scores,key2_indices):
         method = self.ui.matching_method_selection.currentText()
         repeated_val = Counter(key2_indices)
@@ -146,6 +155,7 @@ class TemplateMatching:
         return new_matching_indics, new_list_of_scores
 
 
+
     def get_max_points_corr(self,list_of_scores,list_matches):
         max_matches_list = []
         method = self.ui.matching_method_selection.currentText()
@@ -160,6 +170,7 @@ class TemplateMatching:
         
         return max_matches_list                
     
+
 
     def draw_matches(self,list_matches,img1,img2):
         combined_image = np.zeros((img1.shape[0],img1.shape[1]+img2.shape[1],3),dtype="uint8")
@@ -176,6 +187,7 @@ class TemplateMatching:
 
         
         return combined_image
+
 
 
     def matching_image(self):
