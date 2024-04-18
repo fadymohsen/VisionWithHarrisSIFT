@@ -989,7 +989,7 @@ QTabBar::tab:selected {
                </spacer>
               </item>
               <item>
-               <widget class="QComboBox" name="comboBox">
+               <widget class="QComboBox" name="harris_lambda">
                 <item>
                  <property name="text">
                   <string>Harris</string>

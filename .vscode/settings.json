@@ -4,6 +4,7 @@
         "argmax",
         "discriptors",
         "dtype",
+        "eigvalsh",
         "FLANN",
         "Gaussians",
         "hdif",
