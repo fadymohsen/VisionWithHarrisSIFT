@@ -603,7 +603,7 @@ QTabBar::tab:selected {
 </string>
   </property>
   <property name="currentIndex">
-   <number>1</number>
+   <number>0</number>
   </property>
   <widget class="QWidget" name="ImportMasterImage">
    <attribute name="title">
@@ -997,7 +997,7 @@ QTabBar::tab:selected {
                 </item>
                 <item>
                  <property name="text">
-                  <string>Lambda Minus</string>
+                  <string>Lambda</string>
                  </property>
                 </item>
                </widget>
