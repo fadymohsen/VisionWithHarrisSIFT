@@ -2,13 +2,16 @@ from functools import cmp_to_key
 import numpy as np
 import time
 import cv2
+import pyqtgraph as pg
 
 class SIFT:
-    def __init__(self, original_image):
+    def __init__(self, original_image,tab_widget):
+        self.ui = tab_widget
         self.start_time = time.time()
         # original_image = cv2.imread(file_path,0)
-        original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
+        original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY) # convert image to gray scale
         self.original_image = original_image.astype('float32')
+        
 
     def sift(self, sigma=1.6, no_of_levels=3, assumed_blur=0.5, image_border_width=5):
         # Creating the Scale Space
@@ -23,11 +26,42 @@ class SIFT:
         keypoints = self.localize_keypoints(gaussian_pyramid, DoG_pyramid, no_of_levels, sigma, image_border_width)
         keypoints = self.removeDuplicateKeypoints(keypoints)
         keypoints = self.convertKeypointsToInputImageSize(keypoints)
+        self.display_image(keypoints)
         descriptors = self.generate_descriptors(keypoints, gaussian_pyramid)
 
         print(f"SIFT Computation time: {time.time() - self.start_time}")
 
         return keypoints, descriptors
+    
+
+    def display_image(self,keypoints_list):
+        image = np.copy(self.original_image)
+        image = image.astype("uint8")
+        image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+        for keypoint in keypoints_list:
+            y,x = int(np.round(keypoint.pt[0])), int(np.round(keypoint.pt[1]))
+            image[x:x+3,y:y+3,0] = 255
+            image[x:x+3,y:y+3,1] = 0
+            image[x:x+3,y:y+3,2] = 0
+
+        image= np.rot90(image, -1)
+        self.ui.graphicsLayoutWidget_afterSIFT.clear()
+        view_box = self.ui.graphicsLayoutWidget_afterSIFT.addViewBox()
+        image_item = pg.ImageItem(image)
+        view_box.addItem(image_item)
+        view_box.autoRange()
+    
+
+            
+
+
+
+            
+
+
+
+
+
 
 
     def calculate_sigma_values(self, sigma, no_of_levels):

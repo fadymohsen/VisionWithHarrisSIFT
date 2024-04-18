@@ -19,9 +19,11 @@ class MainWindow(QTabWidget):
         self.full_screen = False
         self.showFullScreen()
         self.pushButton_browseImage.clicked.connect(self.browse_image)
+        self.btn_SIFT.clicked.connect(self.apply_sift)
         self.template_matching = TemplateMatching(self)
         self.Harris = HarrisCornerDetection(self)
         self.template_matching.handle_buttons()
+
         
 
 
@@ -32,21 +34,20 @@ class MainWindow(QTabWidget):
                                                 options=options)
         if file_name:
             self.selected_image_path = file_name
-            self.display_image_on_graphics_layout(file_name)
+            image_data = cv2.imread(file_name)
+            self.display_image(self.graphicsLayoutWidget_displayImagesMain, image_data)
+            self.display_image(self.graphicsLayoutWidget_beforeSIFT, image_data)
+
             self.Harris.upload_image()
-            # self.addSIFT = SIFT(self.selected_image_path)
-            # self.addSIFT.uploadImageSIFT()
+            self.addSIFT = SIFT(image_data,self)
+    
+
+
+    def apply_sift(self):
+        self.addSIFT.sift()         
             
 
-    def display_image_on_graphics_layout(self, image_path):
-        image_data = cv2.imread(image_path)
-        image_data = cv2.cvtColor(image_data, cv2.COLOR_BGR2GRAY)
-        image_data = np.rot90(image_data, -1)
-        self.graphicsLayoutWidget_displayImagesMain.clear()
-        view_box = self.graphicsLayoutWidget_displayImagesMain.addViewBox()
-        image_item = pg.ImageItem(image_data)
-        view_box.addItem(image_item)
-        view_box.autoRange()
+   
 
 
     def display_image(self, graph_name, image_data):

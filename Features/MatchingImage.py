@@ -35,7 +35,7 @@ class TemplateMatching:
             self.ui.display_image(self.ui.originial_image_graph,self.img)
             ## get descriptor and keypointsfor image 
             # self.key_points_1, self.descriptor_1 = sift.detectAndCompute(self.img,None)
-            sift_instance = SIFT(self.img)
+            sift_instance = SIFT(self.img,self.ui)
             self.key_points_1, self.descriptor_1 = sift_instance.sift()
             
         else:
@@ -43,7 +43,7 @@ class TemplateMatching:
             self.ui.display_image(self.ui.template_image_graph,self.template_img)  
             ## get descriptor and keypointsfor image 
             # self.key_points_2, self.descriptor_2 = sift.detectAndCompute(self.template_img,None)
-            sift_instance = SIFT(self.template_img)
+            sift_instance = SIFT(self.template_img,self.ui)
             self.key_points_2, self.descriptor_2 = sift_instance.sift()
                                                 
 
