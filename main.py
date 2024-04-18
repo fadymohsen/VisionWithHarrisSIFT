@@ -47,15 +47,25 @@ class MainWindow(QTabWidget):
         view_box.autoRange()
 
 
-    def display_image(self,graph_name ,image_data):
-        # image_data = cv2.imread(image_path)
-        # image_data = cv2.cvtColor(image_data, cv2.COLOR_BGR2GRAY)
+    def display_image(self, graph_name, image_data):
+        print("Type of image_data:", type(image_data))
+        if isinstance(image_data, np.ndarray):
+            print("Shape of image_data:", image_data.shape)
+        else:
+            print("image_data is not a numpy array")
+
+        # Ensure the image data is an array and has at least two dimensions
+        if not isinstance(image_data, np.ndarray) or image_data.ndim < 2:
+            print("Invalid image data provided")
+            return  # Exit the function if image data is not valid
+
         image_data = np.rot90(image_data, -1)
         graph_name.clear()
         view_box = graph_name.addViewBox()
         image_item = pg.ImageItem(image_data)
         view_box.addItem(image_item)
-        view_box.autoRange()    
+        view_box.autoRange()
+
 
 
     def keyPressEvent(self, event):
