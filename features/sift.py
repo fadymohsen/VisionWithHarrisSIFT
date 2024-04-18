@@ -4,6 +4,9 @@ import time
 import cv2
 import pyqtgraph as pg
 
+
+
+
 class SIFT:
     def __init__(self, original_image,tab_widget):
         self.ui = tab_widget
@@ -21,7 +24,6 @@ class SIFT:
         num_octaves = int(np.round(np.log(min(image.shape)) / np.log(2) - 1))
         gaussian_pyramid = self.create_gaussian_pyramid(image, num_octaves, sigma, no_of_levels)
         DoG_pyramid = self.create_DoG_pyramid(gaussian_pyramid)
-
         # Extracting Keypoints and Descriptors
         keypoints = self.localize_keypoints(gaussian_pyramid, DoG_pyramid, no_of_levels, sigma, image_border_width)
         keypoints = self.removeDuplicateKeypoints(keypoints)
@@ -33,6 +35,8 @@ class SIFT:
 
         return keypoints, descriptors
     
+
+
 
     def display_image(self,keypoints_list):
         image = np.copy(self.original_image)
@@ -52,32 +56,10 @@ class SIFT:
         view_box.addItem(image_item)
         view_box.autoRange()
     
-    # def display_discriptors(self,descriptors):
-    #     image = np.copy(self.original_image)
-    #     image = image.astype("uint8")
-    #     image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
-    #     # for descriptor in descriptors:
-    #     #     y, x = int(np.round(descriptor[0])), int(np.round(descriptor[1]))
-    #     #     image[x:x+3, y:y+3, 0] = 255
-    #     #     image[x:x+3, y:y+3, 1] = 0
-    #     #     image[x:x+3, y:y+3, 2] = 0
-    #     # Draw keypoints on the image
-    #     descriptors = [cv2.KeyPoint(x=np.round(descriptor[0]), y=np.round(descriptor[1]), _size=1) for descriptor in descriptors]
     
-    #     descriptor_image = cv2.drawKeypoints(image, descriptors, None, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
-    #     # Convert image color to RGB (for matplotlib display)
-    #     descriptor_image_rgb = cv2.cvtColor(descriptor_image, cv2.COLOR_BGR2RGB)
 
-    #     image= np.rot90(descriptor_image_rgb, -1)
-    #     # cv2.imwrite('keypoints2.png', image)
-    #     self.ui.graphicsLayoutWidget_discriptors.clear()
-    #     view_box = self.ui.graphicsLayoutWidget_discriptors.addViewBox()
-    #     image_item = pg.ImageItem(image)
-    #     view_box.addItem(image_item)
-    #     view_box.autoRange()
-
-    def calculate_sigma_values(self, sigma, no_of_levels):
+    def calcSigmaValuesUsingNumImagesPerOctave(self, sigma, no_of_levels):
         num_images_per_octave = no_of_levels + 3
         k = 2 ** (1. / no_of_levels)
         gaussian_kernels = np.zeros(num_images_per_octave)
@@ -94,7 +76,7 @@ class SIFT:
     def create_gaussian_pyramid(self, image, num_octaves, sigma, no_of_levels):
         
         gaussian_pyramid = []
-        sigmas = self.calculate_sigma_values(sigma, no_of_levels)
+        sigmas = self.calcSigmaValuesUsingNumImagesPerOctave(sigma, no_of_levels)
         
         gaussian_pyramid = []
         for octave in range(num_octaves):
