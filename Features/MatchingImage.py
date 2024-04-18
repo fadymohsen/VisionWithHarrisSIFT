@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 import time 
-from PyQt5.QtWidgets import QApplication, QTabWidget, QFileDialog
+from PyQt5.QtWidgets import QFileDialog
 from collections import Counter
 from Features.sift import SIFT
 
@@ -23,7 +23,6 @@ class TemplateMatching:
         
         self.ui.upload_image2.clicked.connect(lambda:self.browse_image(0))
     
-
 
     def browse_image(self,idx):
         options = QFileDialog.Options()
@@ -50,8 +49,6 @@ class TemplateMatching:
             sift_instance = SIFT(self.template_img,self.ui)
             self.key_points_2, self.descriptor_2 = sift_instance.sift()
                                                 
-
-
   
     def Normalised_Cross_Correlation(self,roi, target):
        # Normalised Cross Correlation Equation
@@ -67,6 +64,7 @@ class TemplateMatching:
         SSD=np.sum((roi-target)**2)
         norm = np.sqrt((np.sum(roi**2)))*np.sqrt(np.sum(target**2))
         return SSD / norm
+
 
     def template_matching(self):
         key2_indices = []
@@ -161,10 +159,8 @@ class TemplateMatching:
                     max_matches_list.append(list_matches[i])        
         
         return max_matches_list                
-
-
-
     
+
     def draw_matches(self,list_matches,img1,img2):
         combined_image = np.zeros((img1.shape[0],img1.shape[1]+img2.shape[1],3),dtype="uint8")
         combined_image[0:img1.shape[0],0:img1.shape[1]] = img1
@@ -180,7 +176,8 @@ class TemplateMatching:
 
         
         return combined_image
-        
+
+
     def matching_image(self):
         start_time = time.time()       
         list_matches, list_of_scores,key2_indices = self.template_matching()
@@ -194,5 +191,3 @@ class TemplateMatching:
         image = self.draw_matches(max_matches_list,self.img,self.template_img)
        
         self.ui.display_image(self.ui.matching_result_graph,image)
-
-              
