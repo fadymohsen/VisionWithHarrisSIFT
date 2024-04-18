@@ -6,6 +6,8 @@ import cv2
 class SIFT:
     def __init__(self, original_image):
         self.start_time = time.time()
+        # original_image = cv2.imread(file_path,0)
+        original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
         self.original_image = original_image.astype('float32')
 
     def sift(self, sigma=1.6, no_of_levels=3, assumed_blur=0.5, image_border_width=5):
@@ -133,7 +135,7 @@ class SIFT:
             gradient = self.computeGradientAtCenterPixel(pixel_cube)
             hessian = self.computeHessianAtCenterPixel(pixel_cube)
             extremum_update = -np.linalg.lstsq(hessian.reshape(-1, 3), gradient.reshape(-1, 1), rcond=None)[0]
-            if abs(extremum_update[0]) < 0.5 and abs(extremum_update[1]) < 0.5 and abs(extremum_update[2]) < 0.5:
+            if np.abs(extremum_update[0]) < 0.5 and np.abs(extremum_update[1]) < 0.5 and np.abs(extremum_update[2]) < 0.5:
                 break
             j += int(np.round(extremum_update[0]))
             i += int(np.round(extremum_update[1]))
@@ -161,10 +163,13 @@ class SIFT:
 
             if xy_hessian_det > 0 and eigenvalue_ratio * (xy_hessian_trace ** 2) < ((eigenvalue_ratio + 1) ** 2) * xy_hessian_det:
                 keypoint = cv2.KeyPoint()
-                keypoint.pt = ((j + extremum_update[0]) * (2 ** octave_index), (i + extremum_update[1]) * (2 ** octave_index))
+                print(f"extremme:{extremum_update[0],extremum_update[1],extremum_update}")
+                print("functionValueAtUpdatedExtremum:", functionValueAtUpdatedExtremum)
+                print("functionValueAtUpdatedExtremum type:", type(functionValueAtUpdatedExtremum))
+                keypoint.pt = ((j + extremum_update[0][0]) * (2 ** octave_index)), ((i + extremum_update[1][0]) * (2 ** octave_index))
                 keypoint.octave = octave_index + image_index * (2 ** 8) + int(np.round((extremum_update[2] + 0.5) * 255)) * (2 ** 16)
-                keypoint.size = sigma * (2 ** ((image_index + extremum_update[2]) / np.float32(no_of_levels))) * (2 ** (octave_index + 1))
-                keypoint.response = abs(functionValueAtUpdatedExtremum)
+                keypoint.size = int(sigma * (2 ** ((image_index + extremum_update[2]) / np.float32(no_of_levels))) * (2 ** (octave_index + 1)))
+                keypoint.response = abs(functionValueAtUpdatedExtremum[0])
                 return keypoint, image_index
         return None
 

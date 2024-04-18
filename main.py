@@ -5,9 +5,9 @@ import numpy as np
 import pyqtgraph as pg
 import cv2
 
-from Features.MatchingImage import TemplateMatching
-from Features.sift import SIFT
-from Features.HarrisCorner import HarrisCornerDetection
+from features.MatchingImage import TemplateMatching
+from features.sift import SIFT
+from features.HarrisCorner import HarrisCornerDetection
 
 
 
@@ -22,6 +22,7 @@ class MainWindow(QTabWidget):
         self.template_matching = TemplateMatching(self)
         self.Harris = HarrisCornerDetection(self)
         self.template_matching.handle_buttons()
+        
 
 
     def browse_image(self):
@@ -33,7 +34,8 @@ class MainWindow(QTabWidget):
             self.selected_image_path = file_name
             self.display_image_on_graphics_layout(file_name)
             self.Harris.upload_image()
-            self.addSIFT.uploadImageSIFT()
+            # self.addSIFT = SIFT(self.selected_image_path)
+            # self.addSIFT.uploadImageSIFT()
             
 
     def display_image_on_graphics_layout(self, image_path):

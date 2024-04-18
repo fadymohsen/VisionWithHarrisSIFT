@@ -3,7 +3,7 @@ import cv2
 import time 
 from PyQt5.QtWidgets import QApplication, QTabWidget, QFileDialog
 from collections import Counter
-from Features.sift import SIFT
+from features.sift import SIFT
 class TemplateMatching:
     def __init__(self,tab_widget) :
         self.ui = tab_widget
@@ -51,8 +51,8 @@ class TemplateMatching:
   
     def Normalised_Cross_Correlation(self,roi, target):
        # Normalised Cross Correlation Equation
-        roi -=  np.mean(roi)
-        target -= np.mean(target)
+        # roi -=  np.mean(roi)
+        # target -= np.mean(target)
         corr=np.sum(roi*target)
         norm = np.sqrt((np.sum(roi**2)))*np.sqrt(np.sum(target**2))
         return corr / norm      
@@ -150,10 +150,10 @@ class TemplateMatching:
         threshold_val = max(list_of_scores)
         for i ,score in enumerate(list_of_scores):
             if method == "Cross Correlation":
-                if score > 0.97*threshold_val:
+                if score > 0.95*threshold_val:
                     max_matches_list.append(list_matches[i])
             else:
-                if score < 0.08*threshold_val:  ##0.08
+                if score < 0.25*threshold_val:  ##0.08
                     max_matches_list.append(list_matches[i])        
         
         return max_matches_list                
