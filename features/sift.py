@@ -424,4 +424,4 @@ class SIFTCornerDetection:
     def get_keypoints_descriptors(self):
         self.SIFTDetector()
         print(f"Length:{len(self.descriptors)}")
-        return self.keypoints, self.descriptors 
+        return self.keyPoints, self.descriptors 
