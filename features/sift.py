@@ -7,6 +7,7 @@ import pyqtgraph as pg
 
 
 
+
 class SIFT:
     def __init__(self, original_image,tab_widget):
         self.ui = tab_widget
@@ -16,29 +17,31 @@ class SIFT:
         self.original_image = original_image.astype('float32')
         
 
+
+
+
     def sift(self, sigma=1.6, no_of_levels=3, assumed_blur=0.5, image_border_width=5):
         # Creating the Scale Space
         image = cv2.resize(self.original_image, (0, 0), fx=2, fy=2, interpolation=cv2.INTER_LINEAR)
         sigma_diff = np.sqrt(max((sigma ** 2) - ((2 * assumed_blur) ** 2), 0.01))
         image = cv2.GaussianBlur(image, (0, 0), sigmaX=sigma_diff, sigmaY=sigma_diff)
         num_octaves = int(np.round(np.log(min(image.shape)) / np.log(2) - 1))
-        gaussian_pyramid = self.create_gaussian_pyramid(image, num_octaves, sigma, no_of_levels)
-        DoG_pyramid = self.create_DoG_pyramid(gaussian_pyramid)
+        gaussian_pyramid = self.createGaussianPyramidGivingNumOfOctaves(image, num_octaves, sigma, no_of_levels)
+        DoG_pyramid = self.createDoGPyramidFromGaussianPyramid(gaussian_pyramid)
+
         # Extracting Keypoints and Descriptors
-        keypoints = self.localize_keypoints(gaussian_pyramid, DoG_pyramid, no_of_levels, sigma, image_border_width)
+        keypoints = self.localizeKeypointsGivingGaussianPyramidAndDoG(gaussian_pyramid, DoG_pyramid, no_of_levels, sigma, image_border_width)
         keypoints = self.removeDuplicateKeypoints(keypoints)
         keypoints = self.convertKeypointsToInputImageSize(keypoints)
-        self.display_image(keypoints)
-        descriptors = self.generate_descriptors(keypoints, gaussian_pyramid)
+        self.displayImage(keypoints)
+        descriptors = self.generateDescriptorsFromKeypoints(keypoints, gaussian_pyramid)
 
         print(f"SIFT Computation time: {time.time() - self.start_time}")
-
         return keypoints, descriptors
     
 
 
-
-    def display_image(self,keypoints_list):
+    def displayImage(self,keypoints_list):
         image = np.copy(self.original_image)
         image = image.astype("uint8")
         image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
@@ -56,7 +59,6 @@ class SIFT:
         view_box.addItem(image_item)
         view_box.autoRange()
     
-    
 
 
     def calcSigmaValuesUsingNumImagesPerOctave(self, sigma, no_of_levels):
@@ -73,46 +75,38 @@ class SIFT:
         return gaussian_kernels
 
 
-    def create_gaussian_pyramid(self, image, num_octaves, sigma, no_of_levels):
-        
+
+    def createGaussianPyramidGivingNumOfOctaves(self, image, num_octaves, sigma, no_of_levels):
         gaussian_pyramid = []
         sigmas = self.calcSigmaValuesUsingNumImagesPerOctave(sigma, no_of_levels)
-        
         gaussian_pyramid = []
         for octave in range(num_octaves):
             gaussian_levels = []
-            
             for sigma in sigmas:
                 if len(gaussian_levels) == 0:
                     gaussian_levels.append(image)
                 else:
                     image = cv2.GaussianBlur(image, (0, 0), sigmaX=sigma, sigmaY=sigma)
                     gaussian_levels.append(image)
-            
             gaussian_pyramid.append(gaussian_levels)
-
             if octave < num_octaves - 1:
                 image = cv2.resize(image, (int(image.shape[1] / 2), int(image.shape[0] / 2)), interpolation=cv2.INTER_NEAREST)
-        
         return np.array(gaussian_pyramid, dtype=object)
 
 
-    def create_DoG_pyramid(self, gaussian_pyramid):
-        
-        DoG_pyramid = []
 
+    def createDoGPyramidFromGaussianPyramid(self, gaussian_pyramid):
+        DoG_pyramid = []
         for gaussian_levels in gaussian_pyramid:
             DoG_octave = []
-
             for first_image, second_image in zip(gaussian_levels, gaussian_levels[1:]):
                 DoG_octave.append(np.subtract(second_image, first_image))
-            
             DoG_pyramid.append(DoG_octave)
-
         return np.array(DoG_pyramid, dtype=object)
 
 
-    def localize_keypoints(self, gaussian_pyramid, DoG_pyramid, no_of_levels, sigma, image_border_width, contrast_threshold=0.04):
+
+    def localizeKeypointsGivingGaussianPyramidAndDoG(self, gaussian_pyramid, DoG_pyramid, no_of_levels, sigma, image_border_width, contrast_threshold=0.04):
         threshold = np.floor(0.5 * contrast_threshold / no_of_levels * 255)
         keypoints = []
 
@@ -130,13 +124,14 @@ class SIFT:
 
         return keypoints
 
+
+
     def is_extreme(self, first_subimage, second_subimage, third_subimage, threshold):
         center_pixel_value = second_subimage[1, 1]
 
-        # Check if all elements satisfy the condition
         if np.all(np.abs(center_pixel_value) <= threshold):
             return False
-
+        
         if np.all(center_pixel_value > 0):
             return (
                 np.all(center_pixel_value >= first_subimage.max()) and
@@ -149,7 +144,6 @@ class SIFT:
                 np.all(center_pixel_value <= third_subimage.min()) and
                 np.all(center_pixel_value <= second_subimage.min())
             )
-
 
 
 
@@ -194,11 +188,15 @@ class SIFT:
                 return keypoint, image_index
         return None
 
+
+
     def computeGradientAtCenterPixel(self, pixel_array):
         dx = 0.5 * (pixel_array[1, 1, 2] - pixel_array[1, 1, 0])
         dy = 0.5 * (pixel_array[1, 2, 1] - pixel_array[1, 0, 1])
         ds = 0.5 * (pixel_array[2, 1, 1] - pixel_array[0, 1, 1])
         return np.array([dx, dy, ds])
+
+
 
     def computeHessianAtCenterPixel(self, pixel_array):
         center_pixel_value = pixel_array[1, 1, 1]
@@ -212,14 +210,11 @@ class SIFT:
                     [dxy, dyy, dys],
                     [dxs, dys, dss]])
 
-    #########################
-    # Keypoint orientations #
-    #########################
+
 
     def computeKeypointsWithOrientations(self, keypoint, octave_index, gaussian_image, radius_factor=3, num_bins=36, peak_ratio=0.8, scale_factor=1.5):
         keypoints_with_orientations = []
         image_shape = gaussian_image.shape
-
         scale = scale_factor * keypoint.size / np.float32(2 ** (octave_index + 1))
         radius = int(np.round(radius_factor * scale))
         weight_factor = -0.5 / (scale ** 2)
@@ -257,9 +252,7 @@ class SIFT:
                 keypoints_with_orientations.append(new_keypoint)
         return keypoints_with_orientations
 
-    ##############################
-    # Duplicate keypoint removal #
-    ##############################
+
 
     def compareKeypoints(self, keypoint1, keypoint2):
         """Return True if keypoint1 is less than keypoint2
@@ -278,6 +271,8 @@ class SIFT:
             return keypoint2.octave - keypoint1.octave
         return keypoint2.class_id - keypoint1.class_id
 
+
+
     def removeDuplicateKeypoints(self, keypoints):
         if len(keypoints) < 2:
             return keypoints
@@ -294,9 +289,7 @@ class SIFT:
                 unique_keypoints.append(next_keypoint)
         return unique_keypoints
 
-    #############################
-    # Keypoint scale conversion #
-    #############################
+
 
     def convertKeypointsToInputImageSize(self, keypoints):
         converted_keypoints = []
@@ -308,6 +301,7 @@ class SIFT:
         return converted_keypoints
 
 
+
     def unpackOctave(self, keypoint):
         octave = keypoint.octave & 255
         layer = (keypoint.octave >> 8) & 255
@@ -316,7 +310,10 @@ class SIFT:
         scale = 1 / np.float32(1 << octave) if octave >= 0 else np.float32(1 << -octave)
         return octave, layer, scale
 
-    def generate_descriptors(self, keypoints, gaussian_pyramid, window_width=4, num_bins=8, scale_multiplier=3, descriptor_max_value=0.2):
+
+
+    def generateDescriptorsFromKeypoints(self, keypoints, gaussian_pyramid, window_width=4, num_bins=8, scale_multiplier=3, descriptor_max_value=0.2):
+
         descriptors = []
 
         for keypoint in keypoints:
