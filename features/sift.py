@@ -45,24 +45,37 @@ class SIFT:
             image[x:x+3,y:y+3,2] = 0
 
         image= np.rot90(image, -1)
+        # cv2.imwrite('keypoints2.png', image)
         self.ui.graphicsLayoutWidget_afterSIFT.clear()
         view_box = self.ui.graphicsLayoutWidget_afterSIFT.addViewBox()
         image_item = pg.ImageItem(image)
         view_box.addItem(image_item)
         view_box.autoRange()
     
+    def display_discriptors(self,descriptors):
+        image = np.copy(self.original_image)
+        image = image.astype("uint8")
+        image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+        # for descriptor in descriptors:
+        #     y, x = int(np.round(descriptor[0])), int(np.round(descriptor[1]))
+        #     image[x:x+3, y:y+3, 0] = 255
+        #     image[x:x+3, y:y+3, 1] = 0
+        #     image[x:x+3, y:y+3, 2] = 0
+        # Draw keypoints on the image
+        descriptors = [cv2.KeyPoint(x=np.round(descriptor[0]), y=np.round(descriptor[1]), _size=1) for descriptor in descriptors]
+    
+        descriptor_image = cv2.drawKeypoints(image, descriptors, None, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
-            
+        # Convert image color to RGB (for matplotlib display)
+        descriptor_image_rgb = cv2.cvtColor(descriptor_image, cv2.COLOR_BGR2RGB)
 
-
-
-            
-
-
-
-
-
-
+        image= np.rot90(descriptor_image_rgb, -1)
+        # cv2.imwrite('keypoints2.png', image)
+        self.ui.graphicsLayoutWidget_discriptors.clear()
+        view_box = self.ui.graphicsLayoutWidget_discriptors.addViewBox()
+        image_item = pg.ImageItem(image)
+        view_box.addItem(image_item)
+        view_box.autoRange()
 
     def calculate_sigma_values(self, sigma, no_of_levels):
         num_images_per_octave = no_of_levels + 3
@@ -185,21 +198,13 @@ class SIFT:
         if np.all(np.abs(functionValueAtUpdatedExtremum) * no_of_levels >= contrast_threshold):
             xy_hessian = hessian[:2, :2]
             xy_hessian_trace = np.trace(xy_hessian)
-            print("Gradient shape:", gradient.shape)
-            print("Hessian shape:", hessian.shape)
             xy_hessian = hessian[:2, :2]
-            print("xy_hessian shape:", xy_hessian.shape)
             if xy_hessian.shape[0] != xy_hessian.shape[1]:
-                print("xy_hessian is not square:", xy_hessian.shape)
                 return None
             xy_hessian_det = np.linalg.det(xy_hessian)
-            print("xy_hessian determinant:", xy_hessian_det)
 
             if xy_hessian_det > 0 and eigenvalue_ratio * (xy_hessian_trace ** 2) < ((eigenvalue_ratio + 1) ** 2) * xy_hessian_det:
                 keypoint = cv2.KeyPoint()
-                print(f"extremme:{extremum_update[0],extremum_update[1],extremum_update}")
-                print("functionValueAtUpdatedExtremum:", functionValueAtUpdatedExtremum)
-                print("functionValueAtUpdatedExtremum type:", type(functionValueAtUpdatedExtremum))
                 keypoint.pt = ((j + extremum_update[0][0]) * (2 ** octave_index)), ((i + extremum_update[1][0]) * (2 ** octave_index))
                 keypoint.octave = octave_index + image_index * (2 ** 8) + int(np.round((extremum_update[2] + 0.5) * 255)) * (2 ** 16)
                 keypoint.size = int(sigma * (2 ** ((image_index + extremum_update[2]) / np.float32(no_of_levels))) * (2 ** (octave_index + 1)))
@@ -412,4 +417,5 @@ class SIFT:
             descriptor_vector[descriptor_vector < 0] = 0
             descriptor_vector[descriptor_vector > 255] = 255
             descriptors.append(descriptor_vector)
+        self.display_discriptors(descriptors)
         return np.array(descriptors, dtype='float32')

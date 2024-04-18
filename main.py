@@ -4,11 +4,9 @@ from PyQt5.uic import loadUi
 import numpy as np
 import pyqtgraph as pg
 import cv2
-
-from features.MatchingImage import TemplateMatching
-from features.sift import SIFT
-from features.HarrisCorner import HarrisCornerDetection
-
+from Features.MatchingImage import TemplateMatching
+from Features.sift import SIFT
+from Features.HarrisCorner import HarrisCornerDetection
 
 
 
@@ -24,7 +22,6 @@ class MainWindow(QTabWidget):
         self.Harris = HarrisCornerDetection(self)
         self.template_matching.handle_buttons()
 
-        
 
 
     def browse_image(self):
@@ -40,14 +37,9 @@ class MainWindow(QTabWidget):
 
             self.Harris.upload_image()
             self.addSIFT = SIFT(image_data,self)
-    
-
 
     def apply_sift(self):
         self.addSIFT.sift()         
-            
-
-   
 
 
     def display_image(self, graph_name, image_data):
@@ -79,11 +71,6 @@ class MainWindow(QTabWidget):
                 self.showFullScreen()
         else:
             super().keyPressEvent(event)
-
-
-
-
-
 
 
 

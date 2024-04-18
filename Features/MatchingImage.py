@@ -3,7 +3,7 @@ import cv2
 import time 
 from PyQt5.QtWidgets import QApplication, QTabWidget, QFileDialog
 from collections import Counter
-from features.sift import SIFT
+from Features.sift import SIFT
 class TemplateMatching:
     def __init__(self,tab_widget) :
         self.ui = tab_widget
