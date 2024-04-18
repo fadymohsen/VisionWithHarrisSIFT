@@ -16,7 +16,7 @@ Harris Corner Detection is a popular feature detection algorithm used to identif
 
 ### Usage
 Instructions on how to use the Harris implementation, including required parameters and example calls.
-
+![Harris](https://github.com/fadymohsen/VisionWithHarrisSIFT/blob/main/Screenshots%20%26%20Videos/5thHarris.png)
 
 
 
@@ -28,7 +28,7 @@ The Lambda Minus Method is a technique used to refine feature detection, providi
 
 ### Usage
 Detailed guide on employing the Lambda Minus Method within image processing workflows, highlighting parameter configurations.
-
+![LambdaMinus](https://github.com/fadymohsen/VisionWithHarrisSIFT/blob/main/Screenshots%20%26%20Videos/4thLambdaMinus.png)
 
 
 
@@ -39,10 +39,19 @@ SIFT is an algorithm in computer vision to detect and describe local features in
 
 ### Usage
 Step-by-step guide to running the SIFT algorithm, including tips on tuning parameters for various environments and purposes.
+![LambdaMinus](https://github.com/fadymohsen/VisionWithHarrisSIFT/blob/main/Screenshots%20%26%20Videos/6thSIFTKeyPoints.png)
+
+
+
+
 
 ## 4. Feature Matching
 ### Overview
 Feature matching involves identifying matches between different sets of features detected in multiple images based on the descriptors associated with each feature. This is critical for tasks such as object detection, registration, and tracking.
+![LambdaMinus](https://github.com/fadymohsen/VisionWithHarrisSIFT/blob/main/Screenshots%20%26%20Videos/8thSSD.png)
+
+![LambdaMinus](https://github.com/fadymohsen/VisionWithHarrisSIFT/blob/main/Screenshots%20%26%20Videos/9thNCC.png)
+
 
 
 
