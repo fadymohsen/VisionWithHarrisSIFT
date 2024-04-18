@@ -4,7 +4,8 @@ This repository provides implementations and examples for several key computer v
 - **Lambda Minus Method**
 - **Scale-Invariant Feature Transform (SIFT)**
 - **Feature Matching**
-![Browse - Before Adding](https://github.com/fadymohsen/VisionWithHarrisSIFT/blob/main/Videos%20%26%20Screenshots/LinesDetection.png)
+![Browse - Before Adding](https://github.com/fadymohsen/VisionWithHarrisSIFT/blob/main/Videos%20%26%20Screenshots/1st-ImportImage.png)
+![Browse - Before Adding](https://github.com/fadymohsen/VisionWithHarrisSIFT/blob/main/Videos%20%26%20Screenshots/2nd-ImageImported.png)
 
 
 
