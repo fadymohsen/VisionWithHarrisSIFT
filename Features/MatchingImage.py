@@ -4,6 +4,10 @@ import time
 from PyQt5.QtWidgets import QApplication, QTabWidget, QFileDialog
 from collections import Counter
 from Features.sift import SIFT
+
+
+
+
 class TemplateMatching:
     def __init__(self,tab_widget) :
         self.ui = tab_widget
@@ -72,13 +76,13 @@ class TemplateMatching:
       
 
         for i in range(len(self.descriptor_1)):
-            if method == "Cross Correlation":
+            if method == "NCC":
                 threshold_value = 0
             else:
                 threshold_value = 10   
             target_index = 0
             for j in range(len(self.descriptor_2)):
-                if method == "Cross Correlation":
+                if method == "NCC":
                     score = self.Normalised_Cross_Correlation(self.descriptor_1[i],self.descriptor_2[j])
                     if score > threshold_value :
                         threshold_value  = score
@@ -118,13 +122,13 @@ class TemplateMatching:
     
 
         for key,indices_list in repeated_val_indices.items():
-            if method == "Cross Correlation":
+            if method == "NCC":
                 threshold_value = 0
             else:
                 threshold_value = 10
 
             for i in indices_list:
-                if method == "Cross Correlation":
+                if method == "NCC":
                     if list_of_scores[i] > threshold_value:
                         threshold_value = list_of_scores[i]
                         target_idx = i
@@ -149,7 +153,7 @@ class TemplateMatching:
         method = self.ui.matching_method_selection.currentText()
         threshold_val = max(list_of_scores)
         for i ,score in enumerate(list_of_scores):
-            if method == "Cross Correlation":
+            if method == "NCC":
                 if score > 0.95*threshold_val:
                     max_matches_list.append(list_matches[i])
             else:
@@ -167,10 +171,10 @@ class TemplateMatching:
         combined_image[0:img2.shape[0],img1.shape[1]:] = img2
 
         for ky_pt1,ky_pt2 in list_matches:
-            print(ky_pt1,ky_pt2)
+            # print(ky_pt1,ky_pt2)
             pt1 = (int(round(ky_pt1[1])), int(round(ky_pt1[0])))  # x and y are swapped because of the row-column format
             pt2 = (int(round(ky_pt2[1] + img1.shape[1])), int(round(ky_pt2[0])))  # Add img1's width to x coordinate
-            print(f"points:{pt1,pt2}")
+            # print(f"points:{pt1,pt2}")
             # Draw line between keypoints
             combined_image = cv2.line(combined_image, pt1, pt2, (0, 0, 255), 1)
 

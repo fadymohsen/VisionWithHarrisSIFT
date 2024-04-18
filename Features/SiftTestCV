@@ -2,7 +2,7 @@ import cv2
 import matplotlib.pyplot as plt
 
 # Load the image
-image_path = 'Images/box_in_scene.png'  # Change this to the path of your image
+image_path = 'Images/box.png'  # Change this to the path of your image
 image = cv2.imread(image_path)
 
 # Convert it to grayscale (SIFT requires a single channel image)

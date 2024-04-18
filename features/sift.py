@@ -52,30 +52,30 @@ class SIFT:
         view_box.addItem(image_item)
         view_box.autoRange()
     
-    def display_discriptors(self,descriptors):
-        image = np.copy(self.original_image)
-        image = image.astype("uint8")
-        image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
-        # for descriptor in descriptors:
-        #     y, x = int(np.round(descriptor[0])), int(np.round(descriptor[1]))
-        #     image[x:x+3, y:y+3, 0] = 255
-        #     image[x:x+3, y:y+3, 1] = 0
-        #     image[x:x+3, y:y+3, 2] = 0
-        # Draw keypoints on the image
-        descriptors = [cv2.KeyPoint(x=np.round(descriptor[0]), y=np.round(descriptor[1]), _size=1) for descriptor in descriptors]
+    # def display_discriptors(self,descriptors):
+    #     image = np.copy(self.original_image)
+    #     image = image.astype("uint8")
+    #     image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+    #     # for descriptor in descriptors:
+    #     #     y, x = int(np.round(descriptor[0])), int(np.round(descriptor[1]))
+    #     #     image[x:x+3, y:y+3, 0] = 255
+    #     #     image[x:x+3, y:y+3, 1] = 0
+    #     #     image[x:x+3, y:y+3, 2] = 0
+    #     # Draw keypoints on the image
+    #     descriptors = [cv2.KeyPoint(x=np.round(descriptor[0]), y=np.round(descriptor[1]), _size=1) for descriptor in descriptors]
     
-        descriptor_image = cv2.drawKeypoints(image, descriptors, None, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    #     descriptor_image = cv2.drawKeypoints(image, descriptors, None, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
-        # Convert image color to RGB (for matplotlib display)
-        descriptor_image_rgb = cv2.cvtColor(descriptor_image, cv2.COLOR_BGR2RGB)
+    #     # Convert image color to RGB (for matplotlib display)
+    #     descriptor_image_rgb = cv2.cvtColor(descriptor_image, cv2.COLOR_BGR2RGB)
 
-        image= np.rot90(descriptor_image_rgb, -1)
-        # cv2.imwrite('keypoints2.png', image)
-        self.ui.graphicsLayoutWidget_discriptors.clear()
-        view_box = self.ui.graphicsLayoutWidget_discriptors.addViewBox()
-        image_item = pg.ImageItem(image)
-        view_box.addItem(image_item)
-        view_box.autoRange()
+    #     image= np.rot90(descriptor_image_rgb, -1)
+    #     # cv2.imwrite('keypoints2.png', image)
+    #     self.ui.graphicsLayoutWidget_discriptors.clear()
+    #     view_box = self.ui.graphicsLayoutWidget_discriptors.addViewBox()
+    #     image_item = pg.ImageItem(image)
+    #     view_box.addItem(image_item)
+    #     view_box.autoRange()
 
     def calculate_sigma_values(self, sigma, no_of_levels):
         num_images_per_octave = no_of_levels + 3
@@ -417,5 +417,5 @@ class SIFT:
             descriptor_vector[descriptor_vector < 0] = 0
             descriptor_vector[descriptor_vector > 255] = 255
             descriptors.append(descriptor_vector)
-        self.display_discriptors(descriptors)
+        # self.display_discriptors(descriptors)
         return np.array(descriptors, dtype='float32')
