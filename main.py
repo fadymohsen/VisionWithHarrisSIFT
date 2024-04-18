@@ -38,6 +38,7 @@ class MainWindow(QTabWidget):
             self.Harris.upload_image()
             self.addSIFT = SIFT(image_data,self)
 
+
     def apply_sift(self):
         self.addSIFT.sift()         
 
@@ -60,7 +61,6 @@ class MainWindow(QTabWidget):
         image_item = pg.ImageItem(image_data)
         view_box.addItem(image_item)
         view_box.autoRange()
-
 
 
     def keyPressEvent(self, event):
